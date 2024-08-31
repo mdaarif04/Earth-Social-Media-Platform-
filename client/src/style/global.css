@@ -1,0 +1,130 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+#theme {
+  display: none;
+}
+#theme:checked ~ .App {
+  filter: invert(1);
+}
+
+.App {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+}
+.main {
+  max-width: 1000px;
+  width: 100%;
+  margin: auto;
+}
+img {
+  object-fit: cover;
+}
+
+
+/* ---------AUTH------- */
+
+@import url("./auth.css");
+
+/* --------Loading------- */
+
+@import url("./loading.css");
+
+/* --------Header-------- */
+
+@import url("./Header.css");
+
+/* --------Avatar-------- */
+@import url("./avatar.css");
+
+/* --------Header-------- */
+@import url("./Header.css");
+
+/* --------Profile-------- */
+@import url("./profile.css");
+
+/* --------Home-------- */
+@import url("./home.css");
+
+/* --------Status Model-------- */
+@import url("./status_model.css");
+
+/* --------Comments-------- */
+@import url("./comments.css");
+
+/* --------Post Thumb-------- */
+@import url("./post_thumb.css");
+
+/* --------- Responsive ------ */
+@media (max-width: 766px){
+  /* .header .navbar .logo{
+    display: none; */
+    .header .menu{
+      position: absolute;
+      top: calc(100vh - 50px);
+      left: 0;
+      width: 100%;
+      height: 50px;
+      box-shadow: 0 0 10px #ddd;
+      z-index: 2;
+      background: #f8f9fa;
+      border: 1px solid rgb(0,0,0, .125);
+  }
+  .header .menu .navbar-nav{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .header .menu .navbar-nav{
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+  }
+  .header .menu .dropdown-menu{
+    bottom: 100%;
+    top: auto;
+  }
+  
+  .header .search_form{
+      width: 100%;
+  }
+  .header .logo{
+      margin: auto;
+  }
+  .header .logo h1{
+      font-size: 1.5rem;
+  }
+  .wrap_page{
+    margin-bottom: 60px;
+  }
+  
+  /* .message{
+    height: calc(100vh - 100px);
+  }
+  .right_mess,
+  .left_mess{
+    display: none;
+  }
+  .status{
+    padding: 20px 10px;
+  } */
+}
+
+.mode{
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
