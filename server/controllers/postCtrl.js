@@ -34,11 +34,11 @@ const postCtrl = {
 
       res.json({
         msg: "Created Post!",
-        newPost,
-        // {
-        //   ...newPost._doc,
-        //   user: req.user,
-        // },
+        newPost:
+        {
+          ...newPost._doc,
+          user: req.user,
+        },
       });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
@@ -56,7 +56,7 @@ const postCtrl = {
         .populate({
           path: "comments",
           populate: {
-            path: "user likes", 
+            path: "user likes",
             select: "-password",
           },
         });
@@ -211,10 +211,10 @@ const postCtrl = {
 
         res.json({
           msg: "Deleted Post!",
-          // newPost: {
-          //   ...post,
-          //   user: req.user,
-          // },
+          newPost: {
+            ...post,
+            user: req.user,
+          },
         })
       } catch (err) {
         return res.status(500).json({ msg: err.message })

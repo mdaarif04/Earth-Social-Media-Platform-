@@ -9,10 +9,11 @@ export const PROFILE_TYPES = {
   UNFOLLOW: "UNFOLLOW",
   GET_ID: "GET_PROFILE_ID",
   GET_POSTS: "GET_PROFILE_POSTS",
-  UPDATE_POST:'UPDATE_PROFILE_POST'
+  UPDATE_POST: "UPDATE_PROFILE_POST",
 };
 
-export const getProfileUsers = ({ id, auth }) =>
+export const getProfileUsers =
+  ({ id, auth }) =>
   async (dispatch) => {
     dispatch({ type: PROFILE_TYPES.GET_ID, payload: id });
     // if (users.every((user) => user._id !== id)) {
@@ -102,7 +103,7 @@ export const updateProfileUser =
   };
 
 export const follow =
-  ({ users, user, auth }) =>
+  ({ users, user, auth, socket }) =>
   async (dispatch) => {
     let newUser;
     if (users.every((item) => item._id !== user._id)) {
@@ -128,7 +129,12 @@ export const follow =
     });
 
     try {
-      await patchDataAPI(`user/${user._id}/follow`, null, auth.token);
+      const res = await patchDataAPI(
+        `user/${user._id}/follow`,
+        null,
+        auth.token
+      );
+      socket.emit("follow", res.data.newUser);
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,
@@ -168,7 +174,7 @@ export const follow =
   };
 
 export const unfollow =
-  ({ users, user, auth }) =>
+  ({ users, user, auth, socket }) =>
   async (dispatch) => {
     let newUser;
     if (users.every((item) => item._id !== user._id)) {
@@ -201,7 +207,12 @@ export const unfollow =
     });
 
     try {
-      await patchDataAPI(`user/${user._id}/unfollow`, null, auth.token);
+      const res = await patchDataAPI(
+        `user/${user._id}/unfollow`,
+        null,
+        auth.token
+      );
+      socket.emit("unfollow", res.data.newUser);
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,

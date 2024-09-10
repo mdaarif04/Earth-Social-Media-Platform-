@@ -6,20 +6,28 @@ import {
   deleteDataAPI,
 } from "../../utils/fetchData";
 
-export const createComment = ({ post, newComment, auth }) =>
+export const createComment =
+  ({ post, newComment, auth, socket }) =>
   async (dispatch) => {
     const newPost = { ...post, comments: [...post.comments, newComment] };
 
     dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost });
 
     try {
-      const data = { ...newComment, postId: post._id, postUserId: post.user._id };
+      const data = {
+        ...newComment,
+        postId: post._id,
+        postUserId: post.user._id,
+      };
       const res = await postDataAPI("comment", data, auth.token);
 
       const newData = { ...res.data.newComment, user: auth.user };
       const newPost = { ...post, comments: [...post.comments, newData] };
 
       dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost });
+
+      // Socket
+      socket.emit("createComment", newPost);
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,
@@ -28,7 +36,8 @@ export const createComment = ({ post, newComment, auth }) =>
     }
   };
 
-export const updateComment =({ comment, post, content, auth }) =>
+export const updateComment =
+  ({ comment, post, content, auth }) =>
   async (dispatch) => {
     const newComments = EditData(post.comments, comment._id, {
       ...comment,
@@ -92,12 +101,13 @@ export const unLikeComment =
     }
   };
 
-export const deleteComment = ({ post, comment, auth}) =>
+export const deleteComment =
+  ({ post, comment, auth, socket }) =>
   async (dispatch) => {
     const deleteArr = [
       ...post.comments.filter((cm) => cm.reply === comment._id),
       comment,
-    ];
+    ]
 
     const newPost = {
       ...post,
@@ -108,7 +118,7 @@ export const deleteComment = ({ post, comment, auth}) =>
 
     dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost });
 
-    // socket.emit("deleteComment", newPost);
+    socket.emit("deleteComment", newPost);
     try {
       deleteArr.forEach((item) => {
         deleteDataAPI(`comment/${item._id}`, auth.token);
