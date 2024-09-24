@@ -1,6 +1,7 @@
 import { DeleteData, GLOBALTYPES } from "./globalTypes";
 import { getDataAPI, patchDataAPI } from "../../utils/fetchData";
 import { imageUpload } from "../../utils/imageUpload";
+import { createNotify, removeNotify } from "../actions/notifyAction";
 
 export const PROFILE_TYPES = {
   LOADING: "LOADING_PROFILE",
@@ -135,6 +136,15 @@ export const follow =
         auth.token
       );
       socket.emit("follow", res.data.newUser);
+      // Notify
+      const msg = {
+        id: auth.user._id,
+        text: "has started to follow you.",
+        recipients: [newUser._id],
+        url: `/profile/${auth.user._id}`,
+      };
+
+      dispatch(createNotify({ msg, auth, socket }));
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,
@@ -173,8 +183,7 @@ export const follow =
     //   }
   };
 
-export const unfollow =
-  ({ users, user, auth, socket }) =>
+export const unfollow = ({ users, user, auth, socket }) =>
   async (dispatch) => {
     let newUser;
     if (users.every((item) => item._id !== user._id)) {
@@ -213,6 +222,16 @@ export const unfollow =
         auth.token
       );
       socket.emit("unfollow", res.data.newUser);
+
+      // Notify
+      const msg = {
+        id: auth.user._id,
+        text: "has started to follow you.",
+        recipients: [newUser._id],
+        url: `/profile/${auth.user._id}`,
+      };
+
+      dispatch(removeNotify({ msg, auth, socket }));
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,

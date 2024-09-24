@@ -6,8 +6,7 @@ import {
   patchDataAPI,
   deleteDataAPI,
 } from "../../utils/fetchData";
-import { createNotify, removeNotify } from "./notifyAction";
-// import { compose } from "redux";
+import { createNotify, removeNotify } from "./notifyAction"
 
 export const POST_TYPES = {
   CREATE_POST: "CREATE_POST",
@@ -18,8 +17,7 @@ export const POST_TYPES = {
   DELETE_POST: "DELETE_POST",
 };
 
-export const createPost =
-  ({ content, images, auth, socket }) =>
+export const createPost =({ content, images, auth, socket }) =>
   async (dispatch) => {
     let media = [];
     try {
@@ -112,8 +110,7 @@ export const updatePost =
     }
   };
 
-export const likePost =
-  ({ post, auth, socket }) =>
+export const likePost =({ post, auth, socket }) =>
   async (dispatch) => {
     const newPost = { ...post, likes: [...post.likes, auth.user] };
     dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost });
@@ -121,16 +118,16 @@ export const likePost =
 
     try {
       await patchDataAPI(`post/${post._id}/like`, null, auth.token);
-      //       // Notify
-      //       const msg = {
-      //         id: auth.user._id,
-      //         text: "like your post.",
-      //         recipients: [post.user._id],
-      //         url: `/post/${post._id}`,
-      //         content: post.content,
-      //         image: post.images[0].url,
-      //       };
-      //       dispatch(createNotify({ msg, auth, socket }));
+      // Notify
+      const msg = {
+        id: auth.user._id,
+        text: "like your post.",
+        recipients: [post.user._id],
+        url: `/post/${post._id}`,
+        content: post.content,
+        image: post.images[0].url,
+      };
+      dispatch(createNotify({ msg, auth, socket }));
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,
@@ -139,27 +136,27 @@ export const likePost =
     }
   };
 
-export const unLikePost =
-  ({ post, auth, socket }) =>
+export const unLikePost =({ post, auth, socket }) =>
   async (dispatch) => {
     const newPost = {
       ...post,
       likes: post.likes.filter((like) => like._id !== auth.user._id),
     };
     dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost });
+    
     socket.emit("unLikePost", newPost);
 
     try {
       await patchDataAPI(`post/${post._id}/unlike`, null, auth.token);
 
-      // //       // Notify
-      // //       const msg = {
-      // //         id: auth.user._id,
-      // //         text: "like your post.",
-      // //         recipients: [post.user._id],
-      // //         url: `/post/${post._id}`,
-      // //       };
-      // //       dispatch(removeNotify({ msg, auth, socket }));
+      // Notify
+      const msg = {
+        id: auth.user._id,
+        text: "like your post.",
+        recipients: [post.user._id],
+        url: `/post/${post._id}`,
+      };
+      dispatch(removeNotify({ msg, auth, socket }));
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,
@@ -168,9 +165,7 @@ export const unLikePost =
     }
   };
 
-export const getPost =
-  ({ detailPost, id, auth }) =>
-  async (dispatch) => {
+export const getPost = ({ detailPost, id, auth }) =>async (dispatch) => {
     if (detailPost.every((post) => post._id !== id)) {
       try {
         const res = await getDataAPI(`post/${id}`, auth.token);
@@ -185,7 +180,7 @@ export const getPost =
     }
   };
 
-export const deletePost = ({ post, auth, socket }) =>
+export const deletePost =({ post, auth, socket }) =>
   async (dispatch) => {
     dispatch({ type: POST_TYPES.DELETE_POST, payload: post });
 
@@ -198,8 +193,7 @@ export const deletePost = ({ post, auth, socket }) =>
         recipients: res.data.newPost.user.followers,
         url: `/post/${post._id}`,
       };
-      dispatch(removeNotify({ msg, auth, socket }))
-
+      dispatch(removeNotify({ msg, auth, socket }));
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,

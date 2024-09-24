@@ -7,7 +7,7 @@ import DataProvider from "./redux/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <DataProvider>
+  <DataProvider >
     <App />
   </DataProvider>
 );

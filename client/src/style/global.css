@@ -67,6 +67,14 @@ img {
 /* --------Post Thumb-------- */
 @import url("./post_thumb.css");
 
+/* --------Message-------- */
+@import url("./message.css");
+
+/* --------Icons-------- */
+@import url("./icons.css");
+
+
+
 /* --------- Responsive ------ */
 @media (max-width: 766px){
   /* .header .navbar .logo{

@@ -7,6 +7,7 @@ import { updateProfileUser } from "../../redux/actions/profileAction";
 const EditProfile = ({setOnEdit }) => {
   const initState = {
     fullname: "",
+    username:" ",
     mobile: "",
     address: "",
     website: "",
@@ -14,7 +15,7 @@ const EditProfile = ({setOnEdit }) => {
     gender: "",
   };
   const [userData, setUserData] = useState(initState);
-  const { fullname, mobile, address, website, story, gender } = userData;
+  const { fullname, username , mobile, address, website, story, gender } = userData;
 
   const [avatar, setAvatar] = useState("");
 
@@ -95,6 +96,29 @@ const EditProfile = ({setOnEdit }) => {
               }}
             >
               {fullname.length}/25
+            </small>
+          </div>
+        </div>
+        <div className="form-group">
+          <label htmlFor="username">username</label>
+          <div className="position-relative">
+            <input
+              type="text"
+              className="form-control"
+              id="username"
+              name="username"
+              value={username}
+              onChange={handleInput}
+            />
+            <small
+              className="text-danger position-absolute"
+              style={{
+                top: "50%",
+                right: "5px",
+                transform: "translateY(-50%)",
+              }}
+            >
+              {username.length}/25
             </small>
           </div>
         </div>

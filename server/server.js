@@ -8,8 +8,8 @@ const SocketServer = require("./socketServer")
 
 const app = express();
 app.use(express.json());
-app.use(cors());
-app.use(cookieParser());
+app.use(cors())
+app.use(cookieParser())
 
 app.use(express.static('build'))
 
@@ -25,16 +25,17 @@ dotenv.config();
 
 app.get("/", (req, res) => {
   res.json({ msg: "Server is running..." });
-});
+})
 
 // Routes
 app.use("/api", require("./routes/authRoute"));
 app.use("/api", require("./routes/userRouter"));
 app.use("/api", require("./routes/postRouter"));
-app.use("/api", require("./routes/commentRouter"));
-app.use("/api", require("./routes/notifyRouter"));
+app.use("/api", require("./routes/commentRouter"))
+app.use("/api", require("./routes/notifyRouter"))
+app.use("/api", require("./routes/messageRouter"))
 
-// For check
+// For check;
 // const run = async () => {
 //   await mongoose.connect(url);
 //   console.log("Connected to myDB");

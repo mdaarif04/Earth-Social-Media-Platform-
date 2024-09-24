@@ -11,8 +11,6 @@ const Menu = () => {
     { label: "Home", icons: "home", path: "/" },
     { label: "Message", icons: "near_me", path: "/message" },
     { label: "Discover", icons: "explore", path: "/discover" },
-    { label: "Notify", icons: "favorite", path: "/notify" },
-
   ];
 
   const { auth, theme, notify } = useSelector((state) => state);
@@ -24,7 +22,7 @@ const Menu = () => {
   };
 
   return (
-    <div className="menu">
+    <div className="menu" >
       <ul className="navbar-nav flex-row">
         {navLinks.map((link, index) => (
           <li className={`nav-item px-2 ${isActive(link.path)}`} key={index}>
@@ -49,7 +47,6 @@ const Menu = () => {
             >
               favorite
             </span>
-
             <span className="notify_length">{notify.data.length}</span>
           </span>
 
@@ -61,7 +58,6 @@ const Menu = () => {
             <NotifyModel />
           </div>
         </li>
-
 
         <li className="nav-item dropdown" style={{ opacity: 1 }}>
           <span

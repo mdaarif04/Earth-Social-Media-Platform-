@@ -10,7 +10,7 @@ class APIfeatures {
 
   paginating() {
     const page = this.queryString.page * 1 || 1;
-    const limit = this.queryString.limit * 1 || 9;
+    const limit = this.queryString.limit * 9 || 9;
     const skip = (page - 1) * limit;
     this.query = this.query.skip(skip).limit(limit);
     return this;
@@ -161,7 +161,7 @@ const postCtrl = {
   getPost: async (req, res) => {
     try {
       const post = await Posts.findById(req.params.id)
-        .populate("user likes", "avatar username fullname")
+        .populate("user likes", "avatar username fullname ")
         .populate({
           path: "comments",
           populate: {

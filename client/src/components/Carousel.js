@@ -5,7 +5,7 @@ const Carousel = ({ images, id }) => {
   const isActive = (index) => {
     if (index === 0) return "active";
   };
-  const {theme} = useSelector(state => state)
+  const {theme} = useSelector(state => state.theme)
 
   return (
     <div id={`image${id}`} className="carousel slide" data-ride="carousel">
@@ -23,14 +23,21 @@ const Carousel = ({ images, id }) => {
       <div className="carousel-inner">
         {images.map((img, index) => (
           <div key={index} className={`carousel-item ${isActive(index)}`}>
-            {
+            {img.url.match(/video/i) ? (
+              <video controls
+                src={img.url}
+                className="d-block w-100"
+                alt={img.url}
+                style={{ filter: theme ? "invert(1)" : "invert(0)" }}
+              />
+            ) : (
               <img
                 src={img.url}
                 className="d-block w-100"
                 alt={img.url}
                 style={{ filter: theme ? "invert(1)" : "invert(0)" }}
               />
-            }
+            )}
           </div>
         ))}
       </div>
@@ -55,7 +62,7 @@ const Carousel = ({ images, id }) => {
             href={`#image${id}`}
             role="button"
             data-slide="next"
-            style={{width: '5%'}}
+            style={{ width: "5%" }}
           >
             <span
               className="carousel-control-next-icon"

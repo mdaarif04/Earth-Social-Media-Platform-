@@ -23,7 +23,6 @@ const notifyCtrl = {
       return res.status(500).json({ msg: err.message });
     }
   },
-
   removeNotify: async (req, res) => {
     try {
       const notify = await Notifies.findOneAndDelete({
@@ -36,42 +35,40 @@ const notifyCtrl = {
       return res.status(500).json({ msg: err.message });
     }
   },
+  getNotifies: async (req, res) => {
+    try {
+      const notifies = await Notifies.find({ recipients: req.user._id })
+        .sort("-createdAt")
+        .populate("user", "avatar username");
 
-    getNotifies: async (req, res) => {
-      try {
-        const notifies = await Notifies.find({ recipients: req.user._id })
-          .sort("isRead")
-          .populate("user", "avatar username");
+      return res.json({ notifies });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  isReadNotify: async (req, res) => {
+    try {
+      const notifies = await Notifies.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          isRead: true,
+        }
+      );
 
-        return res.json({ notifies });
-      } catch (err) {
-        return res.status(500).json({ msg: err.message })
-      }
-    },
+      return res.json({ notifies });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  deleteAllNotifies: async (req, res) => {
+    try {
+      const notifies = await Notifies.deleteMany({ recipients: req.user._id });
 
-  //   isReadNotify: async (req, res) => {
-  //     try {
-  //       const notifies = await Notifies.findOneAndUpdate(
-  //         { _id: req.params.id },
-  //         {
-  //           isRead: true,
-  //         }
-  //       );
-
-  //       return res.json({ notifies });
-  //     } catch (err) {
-  //       return res.status(500).json({ msg: err.message });
-  //     }
-  //   },
-  //   deleteAllNotifies: async (req, res) => {
-  //     try {
-  //       const notifies = await Notifies.deleteMany({ recipients: req.user._id });
-
-  //       return res.json({ notifies });
-  //     } catch (err) {
-  //       return res.status(500).json({ msg: err.message });
-  //     }
-  //   },
+      return res.json({ notifies });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
 };
 
 module.exports = notifyCtrl;

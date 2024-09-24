@@ -5,9 +5,9 @@ import {
   postDataAPI,
   deleteDataAPI,
 } from "../../utils/fetchData";
+import { createNotify, removeNotify } from "./notifyAction";
 
-export const createComment =
-  ({ post, newComment, auth, socket }) =>
+export const createComment =({ post, newComment, auth, socket }) =>
   async (dispatch) => {
     const newPost = { ...post, comments: [...post.comments, newComment] };
 
@@ -28,6 +28,19 @@ export const createComment =
 
       // Socket
       socket.emit("createComment", newPost);
+
+      // Notify
+      const msg = {
+        id: res.data.newComment._id,
+        text: newComment.reply
+          ? "mentioned you in acomment"
+          : "has commented on your post.",
+        recipients: newComment.reply ? [newComment.tag._id] : [post.user._id],
+        url: `/post/${post._id}`,
+        content: post.content,
+        image: post.images[0].url,
+      };
+      dispatch(createNotify({ msg, auth, socket }));
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,
@@ -107,7 +120,7 @@ export const deleteComment =
     const deleteArr = [
       ...post.comments.filter((cm) => cm.reply === comment._id),
       comment,
-    ]
+    ];
 
     const newPost = {
       ...post,
@@ -123,16 +136,16 @@ export const deleteComment =
       deleteArr.forEach((item) => {
         deleteDataAPI(`comment/${item._id}`, auth.token);
 
-        // const msg = {
-        //   id: item._id,
-        //   text: comment.reply
-        //     ? "mentioned you in a comment."
-        //     : "has commented on your post.",
-        //   recipients: comment.reply ? [comment.tag._id] : [post.user._id],
-        //   url: `/post/${post._id}`,
-        // };
+        const msg = {
+          id: item._id,
+          text: comment.reply
+            ? "mentioned you in a comment."
+            : "has commented on your post.",
+          recipients: comment.reply ? [comment.tag._id] : [post.user._id],
+          url: `/post/${post._id}`,
+        };
 
-        // dispatch(removeNotify({ msg, auth, socket }));
+        dispatch(removeNotify({ msg, auth, socket }));
       });
     } catch (err) {
       dispatch({

@@ -4,8 +4,8 @@ const SocketServer = (socket) => {
   // Connect - Disconnect
 
   socket.on("joinUser", (id) => {
-    users.push({ id, socketId: socket.id });
-    console.log({ users });
+    users.push({ id, socketId: socket.id })
+    // console.log({ users })
   });
   socket.on("disconnect", () => {
     users = users.filter((user) => user.socketId !== socket.id);
@@ -13,6 +13,7 @@ const SocketServer = (socket) => {
 
   // likes
   socket.on("likePost", (newPost) => {
+    
     const ids = [...(newPost.user.followers || []), newPost.user?._id]; // Ensure 'followers' is an array
     const clients = users.filter((user) => ids.includes(user.id)); // Optional chaining removed as 'ids' is always an array
 
@@ -72,6 +73,35 @@ const SocketServer = (socket) => {
     const user = users.find((user) => user.id === newUser._id);
     user && socket.to(`${user.socketId}`).emit("unfollowToClient", newUser);
   });
+
+  // Notification
+  socket.on("createNotify", msg=>{
+    // console.log(msg)
+     const clients = users.filter((user) => msg.recipients.includes(user.id)); // Optional chaining removed as 'ids' is always an array
+
+     if (clients.length > 0) {
+       clients.forEach((client) => {
+         socket.to(`${client.socketId}`).emit("createNotifyToClient", msg);
+       });
+     }
+  })
+  // Delete Notification
+  socket.on("removeNotify", (msg) => {
+    // console.log(msg)
+    const clients = users.filter((user) => msg.recipients.includes(user.id)); // Optional chaining removed as 'ids' is always an array
+    if (clients.length > 0) {
+      clients.forEach((client) => {
+        socket.to(`${client.socketId}`).emit("removeNotifyToClient", msg);
+      });
+    }
+  });
+
+  // Message 
+  socket.on("addMessage", msg => {
+    const user = users.find(user => user.id === msg.recipient)
+    user && socket.to(`${user.socketId}`).emit("addMessageToClient", msg);
+  })
+
 };
 
 module.exports = SocketServer;

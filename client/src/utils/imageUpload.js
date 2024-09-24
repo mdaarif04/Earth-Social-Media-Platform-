@@ -27,7 +27,7 @@ export const imageUpload = async(images) => {
     formData.append("upload_preset", "dvxag4vp");
     formData.append("cloud_name", "mdaarifraza");
 
-    const res = await fetch("https://api.cloudinary.com/v1_1/mdaarifraza/image/upload", {
+    const res = await fetch("https://api.cloudinary.com/v1_1/mdaarifraza/upload", {
       method:"POST",
       body:formData
     })
@@ -37,30 +37,3 @@ export const imageUpload = async(images) => {
   return imgArr;
 };
 
-// export const imageUpload = async (images) => {
-//   let imgArr = [];
-//   for (const item of images) {
-//     const formData = new FormData();
-
-//     if (item.camera) {
-//       formData.append("file", item.camera);
-//     } else {
-//       formData.append("file", item);
-//     }
-
-//     formData.append("upload_preset", "efxjficn");
-//     formData.append("cloud_name", "devat-channel");
-
-//     const res = await fetch(
-//       "https://api.cloudinary.com/v1_1/devat-channel/upload",
-//       {
-//         method: "POST",
-//         body: formData,
-//       }
-//     );
-
-//     const data = await res.json();
-//     imgArr.push({ public_id: data.public_id, url: data.secure_url });
-//   }
-//   return imgArr;
-// };
