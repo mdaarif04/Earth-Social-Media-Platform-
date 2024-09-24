@@ -1,28 +1,27 @@
-import { configureStore } from "@reduxjs/toolkit";
-
-import rootReducer from "./reducers/index.js";
-// import { thunk } from "redux-thunk";
+import { legacy_createStore as createStore, applyMiddleware } from "redux";
+import rootReducer from './reducers/index.js'
+import { thunk } from "redux-thunk";
 // import { composeWithDevTools } from "redux-devtools-extension/developmentOnly";
-import { Provider } from "react-redux";
-
-const store = configureStore({
-  reducer: rootReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
-});
+import { Provider } from 'react-redux'
 
 // import logger from "redux-logger";
 
-// const store = createStore(rootReducer,
+// const store = createStore(rootReducer, 
 //   applyMiddleware(thunk,logger));
-// const store = createStore(rootReducer, applyMiddleware(thunk));
+const store = createStore(rootReducer, applyMiddleware(thunk));
+
 
 // const store = createStore(
 //   rootReducer,
 //   composeWithDevTools(applyMiddleware(thunk))
 // )
-const DataProvider = ({ children }) => {
-  return <Provider store={store}>{children}</Provider>;
-};
+const DataProvider = ({children}) =>{
+  return(
+    <Provider store={store}>
+      {children}
+    </Provider>
+  )
+}
 
 export default DataProvider;
 
