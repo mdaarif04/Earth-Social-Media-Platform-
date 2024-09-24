@@ -41,7 +41,6 @@ const RightSide = () => {
       }
       return newMedia.push(file);
     });
-    console.log(files);
 
     if (err) dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } });
     setMedia([...media, ...newMedia]);

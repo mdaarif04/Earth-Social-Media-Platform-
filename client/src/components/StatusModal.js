@@ -32,7 +32,6 @@ const StatusModal = () => {
       }
       return newImages.push(file);
     });
-    console.log(files)
 
     if (err) dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } });
     setImages([...images, ...newImages]);

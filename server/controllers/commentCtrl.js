@@ -100,7 +100,7 @@ const commentCtrl = {
       await Posts.findOneAndUpdate({ _id: comment.postId }, {
         $pull: { comments: req.params.id }
       })
-      console.log(comment)
+      // console.log(comment)
 
       res.json({ msg: 'Deleted Comment!' })
 

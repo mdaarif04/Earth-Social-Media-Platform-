@@ -35,7 +35,7 @@ const authCtrl = {
       const access_token = createAccessToken({ id: newUser._id });
       const refresh_token = createRefreshToken({ id: newUser._id });
 
-      console.log({ access_token, refresh_token });
+      // console.log({ access_token, refresh_token });
 
       res.cookie("refreshtoken", refresh_token, {
         http: true,
@@ -53,7 +53,7 @@ const authCtrl = {
           password: "",
         },
       });
-      console.log(newUser);
+      // console.log(newUser);
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
@@ -113,7 +113,7 @@ const authCtrl = {
         process.env.REFRESH_TOKEN_SECRET,
         async (err, result) => {
           if (err) return res.status(400).json({ msg: "Please login now." });
-          console.log(result);
+          // console.log(result);
 
           const user = await Users.findById(result.id)
             .select("-password")
