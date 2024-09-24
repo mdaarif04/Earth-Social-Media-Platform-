@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cors())
 app.use(cookieParser())
 
-// app.use(express.static('build'))
+app.use(express.static('build'))
 
 // Socket
 const http = require("http").createServer(app);
