@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import UserCard from "../UserCard.js";
 import { useDispatch, useSelector } from "react-redux";
 import { getDataAPI } from "../../utils/fetchData.js";
@@ -15,6 +15,9 @@ const LeftSide = () => {
   const [searchUsers, setSearchUsers] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [page, setPage] = useState(0);
+
+  const pageEnd = useRef();
 
   const { id } = useParams();
 
@@ -48,9 +51,29 @@ const LeftSide = () => {
     dispatch(getConversations({ auth }));
   }, [dispatch, auth, message.firstLoad]);
 
+  // Load More
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setPage((p) => p + 1);
+        }
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+    observer.observe(pageEnd.current);
+  }, [setPage]);
+
+  useEffect(() => {
+    if (message.resultUsers >= (page - 1) * 9 && page > 1) {
+      dispatch(getConversations({ auth, page }));
+    }
+  }, [dispatch, message.resultUsers, page, auth]);
+
   return (
     <>
-    
       <form className="message_header" onSubmit={handleSearch}>
         <input
           type="text"
@@ -64,7 +87,7 @@ const LeftSide = () => {
         </button>
       </form>
 
-      <div className="message_chat_list" >
+      <div className="message_chat_list">
         {searchUsers.length !== 0 ? (
           <>
             {searchUsers.map((user) => (
@@ -92,6 +115,8 @@ const LeftSide = () => {
             ))}
           </>
         )}
+
+        <button ref={pageEnd} style={{opacity: 0}}>Load More</button>
       </div>
     </>
   );

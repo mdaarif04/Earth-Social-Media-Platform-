@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Avatar from "./Avatar";
-import notifypic from "../images/images.png";
+// import notifypic from "../images/images.png";
 import moment from "moment";
 import { deleteAllNotifies, isReadNotify, NOTIFY_TYPES } from "../redux/actions/notifyAction";
 
@@ -53,9 +53,10 @@ const NotifyModel = () => {
 
       <hr className="mt-0" />
 
-      {notify.data.length === 0 && (
-        <img src={notifypic} alt="NoNotice" className="w-100" />
-      )}
+      {/* {notify.data.length === 0 && (
+        // <img src={notifypic} alt="NoNotice" className="w-100" />
+        <h1></h1>
+      )} */}
 
       <div style={{ maxHeight: "calc(100vh - 200px)", overflow: "auto" }}>
         {notify.data.map((msg, index) => (
@@ -65,11 +66,11 @@ const NotifyModel = () => {
               className="d-flex text-dark align-items-center"
               onClick={() => handleIsRead(msg)}
             >
-              <Avatar src={msg.user.avatar} size="big-avatar" />
+              <Avatar src={msg.user?.avatar} size="big-avatar" />
 
               <div className="mx-1 flex-fill">
                 <div>
-                  <strong className="mr-1">{msg.user.username}</strong>
+                  <strong className="mr-1">{msg.user?.username}</strong>
                   <span>{msg.text}</span>
                 </div>
                 {msg.content && <small>{msg.content.slice(0, 20)}...</small>}

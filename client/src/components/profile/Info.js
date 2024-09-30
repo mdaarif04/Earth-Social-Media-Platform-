@@ -28,7 +28,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
     } else {
       dispatch({ type: GLOBALTYPES.MODAL, payload: false });
     }
-  }, [showFollowers, showFollowing, onEdit]);
+  }, [dispatch, showFollowers, showFollowing, onEdit]);
 
   return (
     <div className="info">
@@ -36,8 +36,8 @@ const Info = ({ id, auth, profile, dispatch }) => {
         <div className="info_container" key={user._id}>
           <Avatar src={user.avatar} size="supper-avatar" />
 
-          <div className="info_content">
-            <div className="info_content_title">
+          <div className="info_content" >
+            <div className="info_content_title" >
               <h2>{user.username}</h2>
               {user._id === auth.user._id ? (
                 <button
