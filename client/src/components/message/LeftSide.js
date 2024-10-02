@@ -5,12 +5,12 @@ import { getDataAPI } from "../../utils/fetchData.js";
 import { GLOBALTYPES } from "../../redux/actions/globalTypes.js";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  addUser,
   getConversations,
+  MESS_TYPES,
 } from "../../redux/actions/messageAction.js";
 
 const LeftSide = () => {
-  const { auth, message } = useSelector((state) => state);
+  const { auth, message, online } = useSelector((state) => state);
   const [search, setSearch] = useState("");
   const [searchUsers, setSearchUsers] = useState([]);
   const dispatch = useDispatch();
@@ -38,7 +38,11 @@ const LeftSide = () => {
   const handleAddUser = (user) => {
     setSearch("");
     setSearchUsers([]);
-    dispatch(addUser({ user, message }));
+    dispatch({
+      type: MESS_TYPES.ADD_USER,
+      payload: { ...user, text: "", media: [] },
+    });
+    dispatch({ type: MESS_TYPES.CHECK_ONLINE_OFFLINE, payload: online });
     return navigate(`/message/${user._id}`);
   };
   const isActive = (user) => {
@@ -71,6 +75,11 @@ const LeftSide = () => {
       dispatch(getConversations({ auth, page }));
     }
   }, [dispatch, message.resultUsers, page, auth]);
+
+  useEffect(() => {
+    if (message.firstLoad)
+      dispatch({ type: MESS_TYPES.CHECK_ONLINE_OFFLINE, payload: online });
+  }, [online, message.firstLoad, dispatch]);
 
   return (
     <>
@@ -109,14 +118,22 @@ const LeftSide = () => {
                 onClick={() => handleAddUser(user)}
               >
                 <UserCard user={user} msg={true}>
-                  <i className="fas fa-circle" />
+                  {user.online ? (
+                    <i className="fas fa-circle text-success" />
+                  ) : (
+                    auth.user.following.find(
+                      (item) => item._id === user._id
+                    ) && <i className="fas fa-circle" />
+                  )}
                 </UserCard>
               </div>
             ))}
           </>
         )}
 
-        <button ref={pageEnd} style={{opacity: 0}}>Load More</button>
+        <button ref={pageEnd} style={{ opacity: 0 }}>
+          Load More
+        </button>
       </div>
     </>
   );

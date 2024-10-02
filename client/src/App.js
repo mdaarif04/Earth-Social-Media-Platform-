@@ -1,30 +1,26 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useEffect } from "react";
-
 import PageRender from "./CustomRouter/PageRender";
-
 import Home from "./pages/home";
 import Login from "./pages/login";
 import Register from "./pages/register";
-
 import PrivateRouter from "./CustomRouter/PrivateRouter";
-
 import Alert from "./components/alert/Alert";
 import Header from "./components/header/Header";
-
 import { useDispatch, useSelector } from "react-redux";
 import { refreshToken } from "./redux/actions/authAction";
 import StatusModal from "./components/StatusModal";
 import { getPosts } from "./redux/actions/postAction";
 import { getSuggestions } from "./redux/actions/suggestionsAction";
-
 import { GLOBALTYPES } from "./redux/actions/globalTypes";
 import io from "socket.io-client";
 import SocketClient from "./SocketClient";
 import { getNotifies } from "./redux/actions/notifyAction";
+import CallModal from "./components/message/CallModal";
+import Peer from 'peerjs'
 
 function App() {
-  const { auth, status, modal } = useSelector((state) => state);
+  const { auth, status, modal, call } = useSelector((state) => state);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -54,6 +50,13 @@ function App() {
     }
   }, []);
 
+  useEffect(()=>{
+    const newPeer = new Peer(undefined, {
+      host: '/', port:'3001'
+    })
+    dispatch({type: GLOBALTYPES.PEER, payload: newPeer})
+  },[dispatch])
+
   return (
     <>
       <BrowserRouter>
@@ -64,6 +67,7 @@ function App() {
             {auth.token && <Header />}
             {status && <StatusModal />}
             {auth.token && <SocketClient />}
+            {call && <CallModal /> }
 
             <main className="wrap_page">
               <Routes>

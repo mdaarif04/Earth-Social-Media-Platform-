@@ -11,7 +11,7 @@ const NotifyModel = () => {
   const dispatch = useDispatch();
 
   const handleIsRead = (msg) => {
-    console.log(msg);
+    // console.log(msg);
     dispatch(isReadNotify({ msg, auth }));
   };
 

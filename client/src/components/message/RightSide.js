@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import UserCard from "../UserCard";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import MsgDisplay from "./MsgDisplay";
 import Icons from "../icons";
 import { GLOBALTYPES } from "../../redux/actions/globalTypes";
@@ -9,13 +9,14 @@ import { imageShow, videoShow } from "../../utils/mediaShow";
 import { imageUpload } from "../../utils/imageUpload";
 import {
   addMessage,
+  deleteConversation,
   getMessages,
   loadMoreMessages,
 } from "../../redux/actions/messageAction";
 import LoadIcon from "../../images/loading.gif";
 
 const RightSide = () => {
-  const { auth, message, theme, socket } = useSelector((state) => state);
+  const { auth, message, theme, socket, peer } = useSelector((state) => state);
   const dispatch = useDispatch();
   const { id } = useParams();
   const [user, setUser] = useState([]);
@@ -30,6 +31,7 @@ const RightSide = () => {
 
   const refDisplay = useRef();
   const pageEnd = useRef();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const newData = message.data.find((item) => item._id === id);
@@ -90,6 +92,7 @@ const RightSide = () => {
       media: newArr,
       createdAt: new Date().toISOString(),
     };
+    
     setLoadMedia(false);
     dispatch(addMessage({ msg, auth, socket }));
     if (refDisplay.current) {
@@ -136,12 +139,62 @@ const RightSide = () => {
     }
   }, [isLoadMore, auth, id, dispatch, page, result]);
 
+  const handleDeleteConversation = () => {
+    if (window.confirm("Do you want to Delete")) {
+      dispatch(deleteConversation({ auth, id }));
+      return navigate("/message");
+    }
+  };
+
+  // Call 
+  const caller = ({video}) =>{
+    const { _id, avatar, username, fullname} = user
+    const msg = {
+      sender: auth.user._id,
+      recipient: _id,
+      avatar, username, fullname, video
+    }
+    dispatch({type: GLOBALTYPES.CALL, payload: msg})
+  }
+
+  const callUser = ({video})=>{
+    const {_id, avatar, username, fullname }= auth.user
+
+    const msg = {
+      sender: _id,
+      recipient: user._id,
+      avatar, username, fullname, video
+    }
+    if (peer.open) msg.peerId = peer._id
+
+    socket.emit('callUser', msg)
+  }
+
+  const handleAudioCall = () => {
+    caller({video: false})
+    callUser({video: false})
+  };
+  const handleVideoCall = () => {
+    caller({video: true})
+    callUser({ video: true });
+  };
+
   return (
     <>
-      <div className="message_header" style={{ width: "100%" }}>
+      <div
+        className="message_header"
+        style={{ width: "100%", cursor: "pointer" }}
+      >
         {user.length !== 0 && (
           <UserCard user={user}>
-            <i className="fas fa-trash text-danger" />
+            <div>
+              <i className="fas fa-phone-alt" onClick={handleAudioCall} />
+              <i className="fas fa-video mx-3" onClick={handleVideoCall} />
+              <i
+                className="fas fa-trash text-danger"
+                onClick={handleDeleteConversation}
+              />
+            </div>
           </UserCard>
         )}
       </div>
@@ -163,7 +216,12 @@ const RightSide = () => {
               )}
               {msg.sender === auth.user._id && (
                 <div className="chat_row you_message">
-                  <MsgDisplay user={auth.user} msg={msg} theme={theme} />
+                  <MsgDisplay
+                    user={auth.user}
+                    msg={msg}
+                    theme={theme}
+                    data={data}
+                  />
                 </div>
               )}
             </div>

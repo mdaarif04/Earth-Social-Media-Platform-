@@ -5,6 +5,11 @@ const cookieParser = require("cookie-parser");
 const SocketServer = require("./socketServer");
 const path = require("path");
 const connectDB = require("./DB/index.js");
+const {PeerServer} = require('peer')
+// const os = require("os");
+
+// const totalcpu = os.cpus().length;
+// console.log(totalcpu);
 
 const _dirname = path.resolve();
 
@@ -13,11 +18,14 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 
-app.use(express.static("build"));
+app.use(express.static("build"))
 
 // Socket
-const http = require("http").createServer(app);
+const http = require("http").createServer(app)
 const io = require("socket.io")(http);
+
+// Create peer server
+PeerServer({port:3001, path:'/'})
 
 io.on("connection", (socket) => {
   SocketServer(socket);

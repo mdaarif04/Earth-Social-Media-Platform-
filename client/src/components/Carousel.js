@@ -41,6 +41,7 @@ const Carousel = ({ images, id }) => {
           </div>
         ))}
       </div>
+      
       {images.length > 1 && (
         <>
           <a

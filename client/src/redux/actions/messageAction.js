@@ -1,5 +1,5 @@
-import { getDataAPI, postDataAPI } from "../../utils/fetchData";
-import { GLOBALTYPES } from "../actions/globalTypes";
+import { deleteDataAPI, getDataAPI, postDataAPI } from "../../utils/fetchData";
+import { DeleteData, GLOBALTYPES } from "../actions/globalTypes";
 
 export const MESS_TYPES = {
   ADD_USER: "ADD_USER",
@@ -7,34 +7,32 @@ export const MESS_TYPES = {
   GET_CONVERSATIONS: "GET_CONVERSATIONS",
   GET_MESSAGES: "GET_MESSAGES",
   UPDATE_MESSAGES: "UPDATE_MESSAGES",
+  DELETE_MESSAGE: "DELETE_MESSAGE",
+  DELETE_CONVERSATION: "DELETE_CONVERSATION",
+  CHECK_ONLINE_OFFLINE: "CHECK_ONLINE_OFFLINE",
 };
 
-export const addUser =
-  ({ user, message }) =>
-  (dispatch) => {
-    if (message.users.every((item) => item._id !== user._id)) {
-      dispatch({
-        type: MESS_TYPES.ADD_USER,
-        payload: { ...user, text: "", media: [] },
-      });
-    }
-    //  dispatch({type: MESS_TYPES.ADD_MESSAGE, payload: msg})
+//  dispatch({type: MESS_TYPES.ADD_MESSAGE, payload: msg})
 
-    // const { _id, avatar, fullname, username } = auth.user
-    // socket.emit('addMessage', {...msg, user: { _id, avatar, fullname, username } })
+// const { _id, avatar, fullname, username } = auth.user
+// socket.emit('addMessage', {...msg, user: { _id, avatar, fullname, username } })
 
-    // try {
-    //     await postDataAPI('message', msg, auth.token)
-    // } catch (err) {
-    //     dispatch({type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}})
-    // }
-  };
+// try {
+//     await postDataAPI('message', msg, auth.token)
+// } catch (err) {
+//     dispatch({type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}})
+// }
 
 export const addMessage =
   ({ msg, auth, socket }) =>
   async (dispatch) => {
     dispatch({ type: MESS_TYPES.ADD_MESSAGE, payload: msg });
-    socket.emit("addMessage", msg);
+    const {_id, avatar, fullname, username} = auth.user;
+    socket.emit("addMessage", {
+      ...msg,
+      user: { _id, avatar, fullname, username },
+    });
+
     try {
       await postDataAPI("message", msg, auth.token);
     } catch (err) {
@@ -57,7 +55,7 @@ export const getConversations =
       res.data.conversations.forEach((item) => {
         item.recipients.forEach((cv) => {
           if (cv._id !== auth.user._id) {
-            newArr.push({ ...cv, text: item.text, media: item.media });
+            newArr.push({ ...cv, text: item.text, media: item.media, call: item.call });
           }
         });
       });
@@ -98,7 +96,6 @@ export const getMessages =
 export const loadMoreMessages =
   ({ auth, id, page = 1 }) =>
   async (dispatch) => {
-    
     try {
       const res = await getDataAPI(
         `message/${id}?limit=${page * 9}`,
@@ -110,6 +107,38 @@ export const loadMoreMessages =
         type: MESS_TYPES.UPDATE_MESSAGES,
         payload: { ...newData, _id: id, page },
       });
+    } catch (err) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: err.response.data.msg },
+      });
+    }
+  };
+
+export const deleteMessages =
+  ({ msg, data, auth }) =>
+  async (dispatch) => {
+    const newData = DeleteData(data, msg._id);
+    dispatch({
+      type: MESS_TYPES.DELETE_MESSAGE,
+      payload: { newData, _id: msg.recipient },
+    });
+    try {
+      await deleteDataAPI(`message/${msg._id}`, auth.token);
+    } catch (err) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: err.response.data.msg },
+      });
+    }
+  };
+
+export const deleteConversation =
+  ({ auth, id }) =>
+  async (dispatch) => {
+    dispatch({ type: MESS_TYPES.DELETE_CONVERSATION, payload: id });
+    try {
+      await deleteDataAPI(`conversation/${id}`, auth.token);
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,
