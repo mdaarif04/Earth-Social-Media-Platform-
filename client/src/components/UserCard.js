@@ -25,16 +25,21 @@ const UserCard = ({
         <div style={{ filter: theme ? "invert(1)" : "invert(0)" }}>
           {user.text}
         </div>
-        {user.media?.length > 0 && (
+        {user.media.length > 0 && (
           <div>
             {user.media.length} <i className="fas fa-image" />
           </div>
         )}
+
         {user.call && (
           <span className="material-icons">
             {user.call.times === 0
-              ? user.call.video ? "video_off" : "phone_disabled"
-              : user.call.video ? "video_off" : "phone_disabled"}
+              ? user.call.video
+                ? "videocam_off"
+                : "phone_disabled"
+              : user.call.video
+              ? "video_camera_front"
+              : "call"}
           </span>
         )}
       </>
@@ -43,23 +48,26 @@ const UserCard = ({
 
   return (
     <div
-      className={`d-flex p-2 align-item-center justify-content-between w-100 ${border} `}
+      className={`d-flex p-2 align-items-center justify-content-between w-100 ${border}`}
     >
-      <div style={{ margin: "-8px" }}>
+      <div>
         <Link
-          className="d-flex align-items-center"
-          to={`/profile/${user?._id}`}
+          to={`/profile/${user._id}`}
           onClick={handleCloseAll}
+          className="d-flex align-items-center"
         >
-          <Avatar src={user?.avatar} size="big-avatar" />
-          <div className="m1-1" style={{ transform: "translateY(-2px)" }}>
-            <span className="d-block">{user?.username}</span>
+          <Avatar src={user.avatar} size="big-avatar" />
+
+          <div className="ml-1" style={{ transform: "translateY(-2px)" }}>
+            <span className="d-block">{user.username}</span>
+
             <small style={{ opacity: 0.7 }}>
               {msg ? showMsg(user) : user.fullname}
             </small>
           </div>
         </Link>
       </div>
+
       {children}
     </div>
   );

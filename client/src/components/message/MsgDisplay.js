@@ -47,37 +47,41 @@ const MsgDisplay = ({ user, msg, theme, data }) => {
           ))}
         </div>
 
-        {
-          msg.call && 
-          <button className="btn d-flex align-items-center py-3"
-          style={{background: "#eee", borderRadius:'10px'}}>
-            <spna className="material-icons font-weight-bold mr-1"
-            style={{fontSize: "2.5rem", color: msg.call.times === 0 ? 'crimson': 'green',
-              filter: theme ? 'invert(1)' : 'invert(0)'
-            }}>
-              {
-                msg.call.times === 0 
-                ? msg.call.video ? 'videocam_off' : 'phone_disabled'
-                : msg.call.video ? 'videocam_front' : 'call'
-              }
+        {msg.call && (
+          <button
+            className="btn d-flex align-items-center py-3"
+            style={{ background: "#eee", borderRadius: "10px" }}
+          >
+            <spna
+              className="material-icons font-weight-bold mr-1"
+              style={{
+                fontSize: "2.5rem",
+                color: msg.call.times === 0 ? "crimson" : "green",
+                filter: theme ? "invert(1)" : "invert(0)",
+              }}
+            >
+              {msg.call.times === 0
+                ? msg.call.video
+                  ? "videocam_off"
+                  : "phone_disabled"
+                : msg.call.video
+                ? "videocam_front"
+                : "call"}
             </spna>
 
             <div className="text_left">
-              <h6>{msg.call.video ? 'Video Call' : 'Audio Call'}</h6>
+              <h6>{msg.call.video ? "Video Call" : "Audio Call"}</h6>
               <small>
-                {
-                  msg.call.times > 0
-                  ? <Times />
-                  : new Date(msg.call.times).toLocaleTimeString() 
-                }
+                {msg.call.times > 0 ? (
+                  <Times total={msg.call.times} />
+                ) : (
+                  new Date(msg.createdAt).toLocaleTimeString()
+                )}
               </small>
             </div>
-
           </button>
-        }
-
+        )}
       </div>
-
 
       <div className="chat_time">
         {new Date(msg.createdAt).toLocaleString()}
