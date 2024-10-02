@@ -81,6 +81,8 @@ const LeftSide = () => {
       dispatch({ type: MESS_TYPES.CHECK_ONLINE_OFFLINE, payload: online });
   }, [online, message.firstLoad, dispatch]);
 
+   
+
   return (
     <>
       <form className="message_header" onSubmit={handleSearch}>

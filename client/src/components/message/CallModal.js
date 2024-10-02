@@ -85,11 +85,33 @@ const CallModal = () => {
     return navigator.mediaDevices.getUserMedia(config);
   };
 
+  // const playStream = (tag, stream) => {
+  //   let video = tag;
+  //   video.srcObject = stream;
+  //   video.play();
+  // };
+
+  // Exchange if you need 
+
   const playStream = (tag, stream) => {
     let video = tag;
+    if (!video.paused) {
+      video.pause(); // Pause the video before setting a new source
+    }
+
     video.srcObject = stream;
-    video.play();
+
+    video.play().catch((error) => {
+      if (error.name === "AbortError") {
+        console.log("Playback was interrupted due to a new load request.");
+      } else {
+        console.error("Error during video playback:", error);
+      }
+    });
   };
+
+
+
   // Answer Call
   const HandleAnswer = () => {
     openStream(call.video).then((stream) => {
