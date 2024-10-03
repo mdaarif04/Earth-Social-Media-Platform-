@@ -167,7 +167,7 @@ const SocketClient = () => {
 
   useEffect(() => {
     socket.on("userBusy", (data) => {
-      console.log(data);
+      // console.log(data);
       dispatch({
         type: GLOBALTYPES.ALERT,
         payload: { error: `${call.username} is busy!` },

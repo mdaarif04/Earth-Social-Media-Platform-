@@ -96,30 +96,30 @@ const CallModal = () => {
     return navigator.mediaDevices.getUserMedia(config);
   };
 
-  // const playStream = (tag, stream) => {
-  //   let video = tag;
-  //   video.srcObject = stream;
-  //   video.play();
-  // };
+  const playStream = (tag, stream) => {
+    let video = tag;
+    video.srcObject = stream;
+    video.play();
+  };
 
   // Exchange if you need
 
-  const playStream = (tag, stream) => {
-    let video = tag;
-    if (!video.paused) {
-      video.pause(); // Pause the video before setting a new source
-    }
+  // const playStream = (tag, stream) => {
+  //   let video = tag;
+  //   if (!video.paused) {
+  //     video.pause(); // Pause the video before setting a new source
+  //   }
 
-    video.srcObject = stream;
+  //   video.srcObject = stream;
 
-    video.play().catch((error) => {
-      if (error.name === "AbortError") {
-        console.log("Playback was interrupted due to a new load request.");
-      } else {
-        console.error("Error during video playback:", error);
-      }
-    });
-  };
+  //   video.play().catch((error) => {
+  //     if (error.name === "AbortError") {
+  //       console.log("Playback was interrupted due to a new load request.");
+  //     } else {
+  //       console.error("Error during video playback:", error);
+  //     }
+  //   });
+  // };
 
   // Answer Call
   const HandleAnswer = () => {
@@ -178,21 +178,21 @@ const CallModal = () => {
   }, [socket, tracks, dispatch, call, answer, total, addCallMessage, newCall]);
 
   // Play - Pause Audio
-  // const playAudio = (newAudio) => {
-  //   newAudio.play();
-  // };
+  const playAudio = (newAudio) => {
+    newAudio.play();
+  };
 
   // If you need changes then change but some problems occurs
-  const playAudio = (newAudio) => {
-    newAudio
-      .play()
-      .then(() => {
-        console.log("Audio is playing!");
-      })
-      .catch((error) => {
-        console.error("Error playing audio:", error);
-      });
-  };
+  // const playAudio = (newAudio) => {
+  //   newAudio
+  //     .play()
+  //     .then(() => {
+  //       console.log("Audio is playing!");
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error playing audio:", error);
+  //     });
+  // };
 
   const pauseAudio = (newAudio) => {
     newAudio.pause();

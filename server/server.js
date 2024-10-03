@@ -5,7 +5,7 @@ const cookieParser = require("cookie-parser");
 const SocketServer = require("./socketServer");
 const path = require("path");
 const connectDB = require("./DB/index.js");
-const {PeerServer} = require('peer')
+const {ExpressPeerServer} = require('peer')
 // const os = require("os");
 
 // const totalcpu = os.cpus().length;
@@ -25,7 +25,7 @@ const http = require("http").createServer(app)
 const io = require("socket.io")(http)
 
 // Create peer server
-PeerServer({port:3001, path:'/'})
+ExpressPeerServer({ port: 3001, path: "/" });
 
 io.on("connection", (socket) => {
   SocketServer(socket);
