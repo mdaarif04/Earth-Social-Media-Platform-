@@ -29,17 +29,17 @@ const SocketServer = (socket) => {
           socket.to(`${client.socketId}`).emit("CheckUserOffline", data.id);
         });
       }
-       if (data.call) {
-         const callUser = users.find((user) => user.id === data.call);
-         if (callUser) {
-           users = EditData(users, callUser.id, null);
-           socket.to(`${callUser.socketId}`).emit("callerDisconnect");
-         }
-       }
-    } 
+      if (data.call) {
+        const callUser = users.find((user) => user.id === data.call);
+        if (callUser) {
+          users = EditData(users, callUser.id, null);
+          socket.to(`${callUser.socketId}`).emit("callerDisconnect");
+        }
+      }
+    }
     users = users.filter((user) => user.socketId !== socket.id);
     console.log(data);
-  })
+  });
 
   // likes
   socket.on("likePost", (newPost) => {
@@ -153,7 +153,6 @@ const SocketServer = (socket) => {
 
   // Call
   socket.on("callUser", (data) => {
-    // console.log({ oldUsers: users });
     users = EditData(users, data.sender, data.recipient);
 
     const client = users.find((user) => user.id === data.recipient);
@@ -167,26 +166,24 @@ const SocketServer = (socket) => {
         socket.to(`${client.socketId}`).emit("callUserToClient", data);
       }
     }
-    // console.log({ newUser: users });
   });
 
-  socket.on("endCall", (data) => {
-    // console.log(data)
-    const client = users.find((user) => user.id === data.sender);
+   socket.on("endCall", (data) => {
+     const client = users.find((user) => user.id === data.sender);
 
-    if (client) {
-      socket.to(`${client.socketId}`).emit("endCallToClient", data);
-      users = EditData(users, client.id, null);
+     if (client) {
+       socket.to(`${client.socketId}`).emit("endCallToClient", data);
+       users = EditData(users, client.id, null);
 
-      if (client.call) {
-        const clientCall = users.find((user) => user.id === client.call);
-        clientCall &&
-          socket.to(`${client.socketId}`).emit("endCallToClient", data);
+       if (client.call) {
+         const clientCall = users.find((user) => user.id === client.call);
+         clientCall &&
+           socket.to(`${clientCall.socketId}`).emit("endCallToClient", data);
 
-        users = EditData(users, client.call, null);
-      }
-    }
-  });
+         users = EditData(users, client.call, null);
+       }
+     }
+   });
 }
 
 module.exports = SocketServer;

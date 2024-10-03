@@ -154,7 +154,7 @@ const SocketClient = () => {
       dispatch({ type: GLOBALTYPES.OFFLINE, payload: id });
     });
     return () => socket.off("CheckUserOffline");
-  }, [socket, dispatch ]);
+  }, [socket, dispatch]);
 
   // Call User
   useEffect(() => {
@@ -162,16 +162,19 @@ const SocketClient = () => {
       dispatch({ type: GLOBALTYPES.CALL, payload: data });
     });
     return () => socket.off("callUserToClient");
-  }, [socket, dispatch ]);
+  }, [socket, dispatch]);
+
 
   useEffect(() => {
     socket.on("userBusy", (data) => {
-      console.log(data)
-      dispatch({ type: GLOBALTYPES.ALERT, payload: {error: `${call.username} is busy!`} });
+      console.log(data);
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: `${call.username} is busy!` },
+      });
     });
     return () => socket.off("userBusy");
-  }, [socket, dispatch, call ]);
-  
+  }, [socket, dispatch, call]);
 
   return (
     <>
