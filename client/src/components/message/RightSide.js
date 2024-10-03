@@ -92,7 +92,7 @@ const RightSide = () => {
       media: newArr,
       createdAt: new Date().toISOString(),
     };
-    
+
     setLoadMedia(false);
     dispatch(addMessage({ msg, auth, socket }));
     if (refDisplay.current) {
@@ -146,39 +146,47 @@ const RightSide = () => {
     }
   };
 
-  // Call 
-  const caller = ({video}) =>{
-    const { _id, avatar, username, fullname} = user
+  // Call
+  const caller = ({ video }) => {
+    const { _id, avatar, username, fullname } = user;
+
     const msg = {
       sender: auth.user._id,
       recipient: _id,
-      avatar, username, fullname, video
-    }
-    dispatch({type: GLOBALTYPES.CALL, payload: msg})
-  }
+      avatar,
+      username,
+      fullname,
+      video,
+    };
+    dispatch({ type: GLOBALTYPES.CALL, payload: msg });
+  };
 
-  const callUser = ({video})=>{
-    const {_id, avatar, username, fullname }= auth.user
+  const callUser = ({ video }) => {
+    const { _id, avatar, username, fullname } = auth.user;
 
     const msg = {
       sender: _id,
       recipient: user._id,
-      avatar, username, fullname, video
-    }
-    if (peer.open) msg.peerId = peer._id
+      avatar,
+      username,
+      fullname,
+      video,
+    };
 
-    socket.emit('callUser', msg)
-  }
+    if (peer.open) msg.peerId = peer._id;
+
+    socket.emit("callUser", msg);
+  };
 
   const handleAudioCall = () => {
-    caller({video: false})
-    callUser({video: false})
-  };
-  const handleVideoCall = () => {
-    caller({video: true})
-    callUser({ video: true });
+    caller({ video: false });
+    callUser({ video: false });
   };
 
+  const handleVideoCall = () => {
+    caller({ video: true });
+    callUser({ video: true });
+  };
   return (
     <>
       <div

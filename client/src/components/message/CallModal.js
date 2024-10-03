@@ -226,6 +226,7 @@ const CallModal = () => {
             </div>
           )}
         </div>
+
         {!answer && (
           <div className="timer">
             <small>{mins.toString().length < 2 ? "0" + mins : mins}</small>
@@ -270,7 +271,7 @@ const CallModal = () => {
         className="show_video"
         style={{
           opacity: answer && call.video ? "1" : "0",
-          filter: theme ? 'invert(1)' : 'invert(0)'
+          filter: theme ? "invert(1)" : "invert(0)",
         }}
       >
         <video ref={youVideo} className="you_video" playsInline muted />
@@ -283,6 +284,7 @@ const CallModal = () => {
           <span>:</span>
           <span>{second.toString().length < 2 ? "0" + second : second}</span>
         </div>
+
         <button
           className="material-icons text-danger end_call"
           onClick={handleEndCall}
