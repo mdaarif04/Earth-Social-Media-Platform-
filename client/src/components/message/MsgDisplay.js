@@ -19,7 +19,7 @@ const MsgDisplay = ({ user, msg, theme, data }) => {
     <>
       <div className="chat_title">
         <Avatar src={user.avatar} size="small-avatar" />
-        <span style={{ opacity: 0.6 }}>{user.username}</span>
+        <span>{user.username}</span>
       </div>
 
       <div className="you_content">
@@ -29,6 +29,7 @@ const MsgDisplay = ({ user, msg, theme, data }) => {
             onClick={HandleDeleteMessage}
           />
         )}
+
         <div>
           {msg.text && (
             <div
@@ -38,7 +39,7 @@ const MsgDisplay = ({ user, msg, theme, data }) => {
               {msg.text}
             </div>
           )}
-          {msg.media?.map((item, index) => (
+          {msg.media.map((item, index) => (
             <div key={index}>
               {item.url.match(/video/i)
                 ? videoShow(item.url, theme)
@@ -52,7 +53,7 @@ const MsgDisplay = ({ user, msg, theme, data }) => {
             className="btn d-flex align-items-center py-3"
             style={{ background: "#eee", borderRadius: "10px" }}
           >
-            <spna
+            <span
               className="material-icons font-weight-bold mr-1"
               style={{
                 fontSize: "2.5rem",
@@ -65,11 +66,11 @@ const MsgDisplay = ({ user, msg, theme, data }) => {
                   ? "videocam_off"
                   : "phone_disabled"
                 : msg.call.video
-                ? "videocam_front"
+                ? "video_camera_front"
                 : "call"}
-            </spna>
+            </span>
 
-            <div className="text_left">
+            <div className="text-left">
               <h6>{msg.call.video ? "Video Call" : "Audio Call"}</h6>
               <small>
                 {msg.call.times > 0 ? (

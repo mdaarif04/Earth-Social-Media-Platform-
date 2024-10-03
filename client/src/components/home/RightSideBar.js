@@ -42,6 +42,7 @@ const RightSideBar = () => {
           href="https://www.youtube.com/@ARazaTPoint"
           target="_blank"
           rel="noreferrer"
+        style={{wordBreak:'break-all'}}
         >
           https://www.youtube.com/@ARazaTPoint
         </a>

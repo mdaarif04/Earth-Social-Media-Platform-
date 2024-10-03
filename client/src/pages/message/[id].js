@@ -7,11 +7,11 @@ const Conversation = () => {
   // line 9 and 14 update css 
   return (
     <div className="message d-flex">
-      <div style={{ width: "30%" }}>
+      <div className="col-md-4 border-right px-0 left_mess">
         <LeftSide />
       </div>
 
-      <div style={{ width: "70%" }}>
+      <div className="col-md-8 px-0">
         <RightSide />
       </div>
     </div>

@@ -15,6 +15,7 @@ const CallModal = () => {
   const [total, setTotal] = useState(0);
   const [answer, setAnswer] = useState(false);
   const [tracks, setTrack] = useState([]);
+  const [newCall, setNewCall] = useState(null);
 
   const youVideo = useRef();
   const otherVideo = useRef();
@@ -56,6 +57,7 @@ const CallModal = () => {
 
   const handleEndCall = () => {
     tracks && tracks.forEach((track) => track.stop());
+    if (newCall) newCall.close();
     let times = answer ? total : 0;
     socket.emit("endCall", { ...call, times });
 
@@ -80,12 +82,13 @@ const CallModal = () => {
   useEffect(() => {
     socket.on("endCallToClient", (data) => {
       tracks && tracks.forEach((track) => track.stop());
+      if (newCall) newCall.close();
       addCallMessage(data, data.times);
       dispatch({ type: GLOBALTYPES.CALL, payload: null });
     });
 
     return () => socket.off("endCallToClient");
-  }, [socket, dispatch, tracks, addCallMessage]);
+  }, [socket, dispatch, tracks, addCallMessage, newCall]);
 
   // Stream Media
   const openStream = (video) => {
@@ -131,6 +134,7 @@ const CallModal = () => {
       });
 
       setAnswer(true);
+      setNewCall(newCall);
     });
   };
 
@@ -149,6 +153,7 @@ const CallModal = () => {
           }
         });
         setAnswer(true);
+        setNewCall(newCall);
       });
     });
 
@@ -159,7 +164,7 @@ const CallModal = () => {
   useEffect(() => {
     socket.on("callerDisconnect", () => {
       tracks && tracks.forEach((track) => track.stop());
-      // if (newCall) newCall.close();
+      if (newCall) newCall.close();
       let times = answer ? total : 0;
       addCallMessage(call, times, true);
       dispatch({ type: GLOBALTYPES.CALL, payload: null });
@@ -170,11 +175,23 @@ const CallModal = () => {
     });
 
     return () => socket.off("callerDisconnect");
-  }, [socket, tracks, dispatch, call, answer, total, addCallMessage]);
+  }, [socket, tracks, dispatch, call, answer, total, addCallMessage, newCall]);
 
   // Play - Pause Audio
+  // const playAudio = (newAudio) => {
+  //   newAudio.play();
+  // };
+
+  // If you need changes then change but some problems occurs
   const playAudio = (newAudio) => {
-    newAudio.play();
+    newAudio
+      .play()
+      .then(() => {
+        console.log("Audio is playing!");
+      })
+      .catch((error) => {
+        console.error("Error playing audio:", error);
+      });
   };
 
   const pauseAudio = (newAudio) => {

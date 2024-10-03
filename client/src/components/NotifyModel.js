@@ -33,7 +33,7 @@ const NotifyModel = () => {
   };
 
   return (
-    <div style={{ minWidth: "280px" }}>
+    <div style={{ minWidth: "300px" }}>
       <div className="d-flex justify-content-between align-items-center px-3">
         <h3>Notification</h3>
         {notify.sound ? (
@@ -50,12 +50,10 @@ const NotifyModel = () => {
           />
         )}
       </div>
-
       <hr className="mt-0" />
 
       {/* {notify.data.length === 0 && (
-        // <img src={notifypic} alt="NoNotice" className="w-100" />
-        <h1></h1>
+        <img src={NoNotice} alt="NoNotice" className="w-100" />
       )} */}
 
       <div style={{ maxHeight: "calc(100vh - 200px)", overflow: "auto" }}>
@@ -66,17 +64,25 @@ const NotifyModel = () => {
               className="d-flex text-dark align-items-center"
               onClick={() => handleIsRead(msg)}
             >
-              <Avatar src={msg.user?.avatar} size="big-avatar" />
+              <Avatar src={msg.user.avatar} size="big-avatar" />
 
               <div className="mx-1 flex-fill">
                 <div>
-                  <strong className="mr-1">{msg.user?.username}</strong>
+                  <strong className="mr-1">{msg.user.username}</strong>
                   <span>{msg.text}</span>
                 </div>
                 {msg.content && <small>{msg.content.slice(0, 20)}...</small>}
               </div>
 
-              {msg.image && <Avatar src={msg.image} size="medium-avatar" />}
+              {msg.image && (
+                <div style={{ width: "30px" }}>
+                  {msg.image.match(/video/i) ? (
+                    <video src={msg.image} width="100%" />
+                  ) : (
+                    <Avatar src={msg.image} size="medium-avatar" />
+                  )}
+                </div>
+              )}
             </Link>
             <small className="text-muted d-flex justify-content-between px-2">
               {moment(msg.createdAt).fromNow()}

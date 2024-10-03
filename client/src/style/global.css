@@ -122,7 +122,7 @@ img {
     margin-bottom: 60px;
   }
   
-  /* .message{
+  .message{
     height: calc(100vh - 100px);
   }
   .right_mess,
@@ -131,7 +131,7 @@ img {
   }
   .status{
     padding: 20px 10px;
-  } */
+  }
 }
 
 .mode{

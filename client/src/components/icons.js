@@ -1,7 +1,6 @@
 import React from "react";
 
 const Icons = ({setContent, content, theme}) => {
-    // const {theme} = useSelector(state => state.theme)
   const reactions = [
     "😂",
     "🙋",
@@ -92,10 +91,11 @@ const Icons = ({setContent, content, theme}) => {
     "🔙",
     "🔝",
     "🔜",
-    "🕉️",
     "✝️",
     "☦️",
   ];
+
+  
   return (
     <div
       className="nav-item dropdown"

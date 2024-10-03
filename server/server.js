@@ -11,7 +11,7 @@ const {PeerServer} = require('peer')
 // const totalcpu = os.cpus().length;
 // console.log(totalcpu);
 
-const _dirname = path.resolve()
+const _dirname = path.resolve();
 
 const app = express();
 app.use(express.json());

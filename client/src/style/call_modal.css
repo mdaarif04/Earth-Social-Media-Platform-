@@ -12,7 +12,10 @@
 }
 .call_box{
     width: 100%;
-    max-width: 413px;
+    /* max-width: 413px; */
+    /* if you want to not full screen show then uncomment top of code in comment down two code comment u */
+    max-width: 100%;
+    height: 100%;
     background: #36454F;
     display: flex;
     align-items: center;
@@ -20,8 +23,8 @@
     flex-direction: column;
     color: white;
     padding: 50px 0;
-    border-radius: 5px;
-    box-shadow: 0 0 5px #36454F;
+    /* border-radius: 5px; */
+    /* box-shadow: 0 0 5px #36454F; */
 }
 .call_box h4, .call_box h6{
     margin-top: 5px;

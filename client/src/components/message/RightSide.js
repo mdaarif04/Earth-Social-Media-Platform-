@@ -189,15 +189,14 @@ const RightSide = () => {
   };
   return (
     <>
-      <div
-        className="message_header"
-        style={{ width: "100%", cursor: "pointer" }}
-      >
+      <div className="message_header" style={{ cursor: "pointer" }}>
         {user.length !== 0 && (
           <UserCard user={user}>
             <div>
               <i className="fas fa-phone-alt" onClick={handleAudioCall} />
+
               <i className="fas fa-video mx-3" onClick={handleVideoCall} />
+
               <i
                 className="fas fa-trash text-danger"
                 onClick={handleDeleteConversation}
@@ -209,19 +208,21 @@ const RightSide = () => {
 
       <div
         className="chat_container"
-        style={{ height: media.length > 0 ? "calc(100% - 180px" : "" }}
+        style={{ height: media.length > 0 ? "calc(100% - 180px)" : "" }}
       >
         <div className="chat_display" ref={refDisplay}>
           <button style={{ marginTop: "-25px", opacity: 0 }} ref={pageEnd}>
             Load more
           </button>
-          {data?.map((msg, index) => (
+
+          {data.map((msg, index) => (
             <div key={index}>
               {msg.sender !== auth.user._id && (
                 <div className="chat_row other_message">
                   <MsgDisplay user={user} msg={msg} theme={theme} />
                 </div>
               )}
+
               {msg.sender === auth.user._id && (
                 <div className="chat_row you_message">
                   <MsgDisplay

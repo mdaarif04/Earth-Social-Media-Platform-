@@ -104,24 +104,13 @@ const SocketServer = (socket) => {
 
   // Notification
   socket.on("createNotify", (msg) => {
-    // console.log(msg)
-    const clients = users.filter((user) => msg.recipients.includes(user.id)); // Optional chaining removed as 'ids' is always an array
-
-    if (clients.length > 0) {
-      clients.forEach((client) => {
-        socket.to(`${client.socketId}`).emit("createNotifyToClient", msg);
-      });
-    }
+    const client = users.find((user) => msg.recipients.includes(user.id));
+    client && socket.to(`${client.socketId}`).emit("createNotifyToClient", msg);
   });
-  // Delete Notification
+
   socket.on("removeNotify", (msg) => {
-    // console.log(msg)
-    const clients = users.filter((user) => msg.recipients.includes(user.id)); // Optional chaining removed as 'ids' is always an array
-    if (clients.length > 0) {
-      clients.forEach((client) => {
-        socket.to(`${client.socketId}`).emit("removeNotifyToClient", msg);
-      });
-    }
+    const client = users.find((user) => msg.recipients.includes(user.id));
+    client && socket.to(`${client.socketId}`).emit("removeNotifyToClient", msg);
   });
 
   // Message
@@ -168,22 +157,22 @@ const SocketServer = (socket) => {
     }
   });
 
-   socket.on("endCall", (data) => {
-     const client = users.find((user) => user.id === data.sender);
+  socket.on("endCall", (data) => {
+    const client = users.find((user) => user.id === data.sender);
 
-     if (client) {
-       socket.to(`${client.socketId}`).emit("endCallToClient", data);
-       users = EditData(users, client.id, null);
+    if (client) {
+      socket.to(`${client.socketId}`).emit("endCallToClient", data);
+      users = EditData(users, client.id, null);
 
-       if (client.call) {
-         const clientCall = users.find((user) => user.id === client.call);
-         clientCall &&
-           socket.to(`${clientCall.socketId}`).emit("endCallToClient", data);
+      if (client.call) {
+        const clientCall = users.find((user) => user.id === client.call);
+        clientCall &&
+          socket.to(`${clientCall.socketId}`).emit("endCallToClient", data);
 
-         users = EditData(users, client.call, null);
-       }
-     }
-   });
+        users = EditData(users, client.call, null);
+      }
+    }
+  });
 }
 
 module.exports = SocketServer;
