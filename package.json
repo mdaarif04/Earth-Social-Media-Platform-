@@ -21,9 +21,9 @@
   "scripts": {
     "dev": "nodemon server/server.js",
     "build": "npm install --legacy-peer-deps && npm install --legacy-peer-deps --prefix client && npm run build --prefix client",
-    "start": "node server/server.js"
+    "start": "node server/server.js" 
   },
-  "author": "",
+  "author": "",                           
   "license": "ISC",
   "description": ""
 }
