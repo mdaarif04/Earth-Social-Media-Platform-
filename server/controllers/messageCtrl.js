@@ -19,7 +19,7 @@ class APIfeatures {
 const messageCtrl = {
   createMessage: async (req, res) => {
     try {
-      const {sender, recipient, text, media, call } = req.body;
+      const { sender, recipient, text, media, call } = req.body;
 
       if (!recipient || (!text.trim() && media.length === 0 && !call)) return;
 
@@ -34,14 +34,15 @@ const messageCtrl = {
           recipients: [sender, recipient],
           text,
           media,
-          call
+          call,
         },
         { new: true, upsert: true }
       );
 
       const newMessage = new Messages({
         conversation: newConversation._id,
-        sender ,call,
+        sender,
+        call,
         recipient,
         text,
         media,
@@ -108,6 +109,7 @@ const messageCtrl = {
       return res.status(500).json({ msg: err.message });
     }
   },
+
   deleteConversation: async (req, res) => {
     try {
       const newConver = await Conversations.findOneAndDelete({

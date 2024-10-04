@@ -5,6 +5,8 @@ import FollowBtn from "../FollowBtn";
 import Followers from "./Followers";
 import Following from "./Following";
 import { GLOBALTYPES } from "../../redux/actions/globalTypes";
+import { useNavigate } from "react-router-dom";
+// import { MESS_TYPES } from "../../redux/actions/messageAction";
 
 const Info = ({ id, auth, profile, dispatch }) => {
   const [userData, setUserData] = useState([]);
@@ -30,14 +32,28 @@ const Info = ({ id, auth, profile, dispatch }) => {
     }
   }, [dispatch, showFollowers, showFollowing, onEdit]);
 
+  const navigate = useNavigate();
+
+
+  const MessageBox= ()=>{
+    // setSearch("");
+    // setSearchUsers([]);
+    // dispatch({
+    //   type: MESS_TYPES.ADD_USER,
+    //   payload: { ...user, text: "", media: [] },
+    // });
+    return navigate(`/message`);
+    // /${user._id}
+  }
+
   return (
     <div className="info">
       {userData?.map((user) => (
         <div className="info_container" key={user._id}>
           <Avatar src={user.avatar} size="supper-avatar" />
 
-          <div className="info_content" >
-            <div className="info_content_title" >
+          <div className="info_content">
+            {/* <div className="info_content_title" >
               <h2>{user.username}</h2>
               {user._id === auth.user._id ? (
                 <button
@@ -48,6 +64,26 @@ const Info = ({ id, auth, profile, dispatch }) => {
                 </button>
               ) : (
                 <FollowBtn user={user} />
+              )}
+            </div> */}
+            <div className="info_content_title">
+              <h2>{user.username}</h2>
+              {user._id === auth.user._id ? (
+                // Show only the Edit Profile button for the logged-in user
+                <button
+                  className="btn btn-outline-info"
+                  onClick={() => setOnEdit(true)}
+                >
+                  Edit Profile
+                </button>
+              ) : (
+                // Show the Message button and the Follow button for other users
+                <>
+                  <button className="btn btn-outline-info " onClick={MessageBox}>
+                    Message 
+                  </button>
+                  <FollowBtn user={user} />
+                </>
               )}
             </div>
 
@@ -66,7 +102,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
               {user.fullname} <span className="text-danger">{user.mobile}</span>
             </h6>
             <p className="m-0">{user.address}</p>
-            <h6 className="m-0">{user.email}</h6>
+            {/* <h6 className="m-0">{user.email}</h6> */}
             <a href={user.website} target="_blank" rel="noreferrer">
               {user.website}
             </a>

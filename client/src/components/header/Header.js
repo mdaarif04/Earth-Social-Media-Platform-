@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Menu from "./Menu";
 import Search from "./Search";
-import arlog from "../../images/aricons.png";
+// import arlog from "../../images/aricons.png";
 
 const Header = () => {
   return (
@@ -27,7 +27,7 @@ const Header = () => {
             onClick={() => window.scrollTo({ top: 0 })}
           >
             {/* <img width="50px" src={arlog} alt="Not found" /> */}
-            Clixify
+            ARTPoint
           </h1>
         </Link>
 

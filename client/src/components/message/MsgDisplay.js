@@ -13,7 +13,62 @@ const MsgDisplay = ({ user, msg, theme, data }) => {
     if (window.confirm("Do you want to delete?")) {
       dispatch(deleteMessages({ msg, data, auth }));
     }
-  }
+  };
+
+  // const downloadMedia
+  // onClick={(e) => downloadMedia(e, message.text)}
+  // export const downloadMedia = async (e, originalImage) => {
+  //   e.preventDefault();
+  //   try {
+  //     fetch(originalImage)
+  //       .then((resp) => resp.blob())
+  //       .then((blob) => {
+  //         const url = window.URL.createObjectURL(blob);
+  //         const a = document.createElement("a");
+  //         a.style.display = "none";
+  //         a.href = url;
+
+  //         const nameSplit = originalImage.split("/");
+  //         const duplicateName = nameSplit.pop();
+
+  //         // the filename you want
+  //         a.download = "" + duplicateName + "";
+  //         document.body.appendChild(a);
+  //         a.click();
+  //         window.URL.revokeObjectURL(url);
+  //       })
+  //       .catch((error) =>
+  //         console.log("Error while downloading the image ", error)
+  //       );
+  //   } catch (error) {
+  //     console.log("Error while downloading the image ", error.messages);
+  //   }
+  // };
+
+  // const downloadMedia = async (originalImage) => {
+  //   try {
+  //     // Fetch the file from the URL
+  //     fetch(originalImage)
+  //       .then((resp) => resp.blob())
+  //       .then((blob) => {
+  //         const url = window.URL.createObjectURL(blob);
+  //         const a = document.createElement("a");
+  //         a.style.display = "none";
+  //         a.href = url;
+
+  //         const nameSplit = originalImage.split("/");
+  //         const duplicateName = nameSplit.pop();
+
+  //         // the filename you want
+  //         a.download = "" + duplicateName + "";
+  //         document.body.appendChild(a);
+  //         a.click();
+  //         window.URL.revokeObjectURL(url);
+  //       });
+  //   } catch (error) {
+  //     console.error("Error downloading the file:", error);
+  //   }
+  // };
 
   return (
     <>
@@ -24,10 +79,16 @@ const MsgDisplay = ({ user, msg, theme, data }) => {
 
       <div className="you_content">
         {user._id === auth.user._id && (
-          <i
-            className="fas fa-trash text-danger"
-            onClick={HandleDeleteMessage}
-          />
+          <>
+            <i
+              className="fas fa-trash text-danger"
+              onClick={HandleDeleteMessage}
+            />
+            {/* <i
+              className="fas fa-download text-danger"
+              onClick={(e) => downloadMedia(e, msg.text)}
+            /> */}
+          </>
         )}
 
         <div>
@@ -39,6 +100,7 @@ const MsgDisplay = ({ user, msg, theme, data }) => {
               {msg.text}
             </div>
           )}
+         
           {msg.media.map((item, index) => (
             <div key={index}>
               {item.url.match(/video/i)

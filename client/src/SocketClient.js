@@ -108,7 +108,7 @@ const SocketClient = () => {
   useEffect(() => {
     socket.on("addMessageToClient", (msg) => {
       dispatch({ type: MESS_TYPES.ADD_MESSAGE, payload: msg });
-      console.log(msg);
+      // console.log(msg);
 
       dispatch({
         type: MESS_TYPES.ADD_USER,

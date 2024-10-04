@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GLOBALTYPES } from "../redux/actions/globalTypes";
 import { createPost, updatePost } from "../redux/actions/postAction";
-import Icons from './icons'
-import {imageShow, videoShow} from '../utils/mediaShow'
+import Icons from "./icons";
+import { imageShow, videoShow } from "../utils/mediaShow";
 
 const StatusModal = () => {
   const { auth, theme, status, socket } = useSelector((state) => state);
@@ -17,7 +17,7 @@ const StatusModal = () => {
   const videoref = useRef();
   const refCanvas = useRef();
 
-  const [tracks, setTracks] = useState("");
+  const [tracks, setTracks] = useState([]);
 
   const handleChangeImages = (e) => {
     const files = [...e.target.files];
@@ -27,7 +27,7 @@ const StatusModal = () => {
     files.forEach((file) => {
       if (!file) return (err = "File does not exist.");
 
-      if (file.size > 1024*1024*5) {
+      if (file.size > 1024 * 1024 * 5) {
         return (err = "The Image/video largest is 5mb.");
       }
       return newImages.push(file);
@@ -43,19 +43,21 @@ const StatusModal = () => {
     setImages(newArr);
   };
 
-  const handleStream = () => {
-    setStream(true);
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then((mediaStream) => {
-          videoref.current.srcObject = mediaStream;
-          videoref.current.play();
-          setTracks(tracks[0]);
-        })
-        .catch((err) => console.log(err));
-    }
-  };
+const [cameraFacingMode, setCameraFacingMode] = useState("user"); // Default to user camera
+
+const handleStream = () => {
+  setStream(true);
+  if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices
+      .getUserMedia({ video: { facingMode: cameraFacingMode } }) // Use the current camera mode
+      .then((mediaStream) => {
+        videoref.current.srcObject = mediaStream;
+        videoref.current.play();
+        setTracks(mediaStream.getVideoTracks()); // Store the video tracks
+      })
+      .catch((err) => console.log(err));
+  }
+};
 
   useEffect(() => {
     if (status.onEdit) {
@@ -77,10 +79,13 @@ const StatusModal = () => {
     setImages([...images, { camera: URL }]);
   };
 
-  const handleStopStream = () => {
-    tracks?.stop();
-    setStream(false);
-  };
+const handleStopStream = () => {
+  if (tracks && tracks.length > 0) {
+    tracks.forEach((track) => track.stop()); // Loop through tracks and stop each one
+  }
+  setStream(false);
+};
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -104,13 +109,25 @@ const StatusModal = () => {
 
   useEffect(() => {
     if (status.onEdit) {
-      setContent(status.content)
-      setImages(status.images)
+      setContent(status.content);
+      setImages(status.images);
     }
-  }, [status])
+  }, [status]);
 
+  const handleChangeCamera = () => {
+    // Stop the current stream
+    if (tracks.length > 0) {
+      tracks.forEach((track) => track.stop());
+    }
 
-  
+    // Toggle cameraFacingMode
+    setCameraFacingMode((prevMode) =>
+      prevMode === "user" ? "environment" : "user"
+    );
+
+    // Restart the stream with the new camera mode
+    handleStream();
+  };
 
   return (
     <div className="status_modal">
@@ -188,7 +205,10 @@ const StatusModal = () => {
 
           <div className="input_images">
             {stream ? (
-              <i className="fas fa-camera" onClick={handleCapture} />
+              <>
+                <i className="fas fa-camera" onClick={handleCapture} />
+                <i className="fas fa-sync-alt" onClick={handleChangeCamera} />
+              </>
             ) : (
               <>
                 {" "}
