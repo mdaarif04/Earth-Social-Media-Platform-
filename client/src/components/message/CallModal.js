@@ -55,15 +55,20 @@ const CallModal = () => {
     [dispatch, socket, auth]
   );
 
-  const handleEndCall = () => {
-    tracks && tracks.forEach((track) => track.stop());
-    if (newCall) newCall.close();
-    let times = answer ? total : 0;
-    socket.emit("endCall", { ...call, times });
+const handleEndCall = () => {
+  // Stop all media tracks
+  if (tracks) {
+    tracks.forEach((track) => track.stop()); // This should stop the camera
+  }
+  if (newCall) {
+    newCall.close(); // Close the current call
+  }
+  let times = answer ? total : 0;
+  socket.emit("endCall", { ...call, times });
+  addCallMessage(call, times);
+  dispatch({ type: GLOBALTYPES.CALL, payload: null });
+};
 
-    addCallMessage(call, times);
-    dispatch({ type: GLOBALTYPES.CALL, payload: null });
-  };
 
   useEffect(() => {
     if (answer) {
@@ -96,17 +101,36 @@ const CallModal = () => {
   //   return navigator.mediaDevices.getUserMedia(config);
   // };
 
-  // Stream Media with configurable facingMode
-  const openStream = (video, facingMode = "user") => {
-    const config = { audio: true, video: { facingMode } };
-    return navigator.mediaDevices.getUserMedia(config);
+const openStream = (video, facingMode = "user") => {
+  const config = {
+    audio: true,
+    video: {
+      facingMode: facingMode, // Apply the facingMode for switching camera
+    },
   };
+  return navigator.mediaDevices.getUserMedia(config);
+};
 
-  const playStream = (tag, stream) => {
-    let video = tag;
-    video.srcObject = stream;
-    video.play();
+const playStream = (tag, stream) => {
+  let video = tag;
+
+  if (!video.paused) {
+    video.pause(); // Pause the video before setting a new source
+  }
+
+  video.srcObject = stream; // Set the new stream
+
+  video.onloadedmetadata = () => {
+    video.play().catch((error) => {
+      if (error.name === "AbortError") {
+        console.log("Playback was interrupted due to a new load request.");
+      } else {
+        console.error("Error during video playback:", error);
+      }
+    });
   };
+};
+
 
   // Exchange if you need
 
@@ -216,38 +240,39 @@ const CallModal = () => {
     return () => pauseAudio(newAudio);
   }, [answer]);
 
-  const [isFrontCamera, setIsFrontCamera] = useState(true);
+  const [isFrontCamera, setIsFrontCamera] = useState(true); // Track camera facing
 
   const handleChangeCamera = () => {
-    // Stop the current tracks before switching the camera
-    tracks && tracks.forEach((track) => track.stop());
+  // Stop the current tracks before switching the camera
+  tracks && tracks.forEach((track) => track.stop());
 
-    // Switch camera facing mode
-    const facingMode = isFrontCamera ? "environment" : "user"; // Toggle between front and back
+  // Switch camera facing mode
+  const facingMode = isFrontCamera ? "environment" : "user"; // Toggle between front and back
 
-    // Open the stream with the new facing mode
-    openStream(call.video, facingMode).then((stream) => {
-      playStream(youVideo.current, stream);
-      const track = stream.getTracks();
-      setTrack(track);
+  // Open the stream with the new facing mode
+  openStream(call.video, facingMode).then((stream) => {
+    playStream(youVideo.current, stream); // Use the updated playStream function
+    const track = stream.getTracks();
+    setTrack(track);
 
-      if (newCall) {
-        // Stop the existing call
-        newCall.close();
+    if (newCall) {
+      // Stop the existing call
+      newCall.close();
 
-        // Start a new call with the updated stream
-        const updatedCall = peer.call(call.peerId, stream);
-        updatedCall.on("stream", function (remoteStream) {
-          playStream(otherVideo.current, remoteStream);
-        });
+      // Start a new call with the updated stream
+      const updatedCall = peer.call(call.peerId, stream);
+      updatedCall.on("stream", function (remoteStream) {
+        playStream(otherVideo.current, remoteStream); // Play the remote stream
+      });
 
-        setNewCall(updatedCall);
-      }
-    });
+      setNewCall(updatedCall);
+    }
+  });
 
-    // Toggle the camera state
-    setIsFrontCamera(!isFrontCamera);
-  };
+  // Toggle the camera state
+  setIsFrontCamera(!isFrontCamera);
+};
+
 
   return (
     <div className="call_modal">
@@ -331,13 +356,6 @@ const CallModal = () => {
           background: "black",
         }}
       >
-        <button
-          className="fas fa-sync-alt  text-danger "
-          onClick={handleChangeCamera}
-          style={{cursor:'pointer'}}
-          // aria-label="Switch Camera"
-        />
-
         <video ref={youVideo} className="you_video" playsInline muted />
         <video ref={otherVideo} className="other_video" playsInline />
 
@@ -349,12 +367,45 @@ const CallModal = () => {
           <span>{second.toString().length < 2 ? "0" + second : second}</span>
         </div>
 
-        <button
-          className="material-icons text-danger end_call"
-          onClick={handleEndCall}
+        <div
+          className="show_video"
+          style={{
+            opacity: answer && call.video ? "1" : "0",
+            filter: theme ? "invert(1)" : "invert(0)",
+            background: "black",
+          }}
         >
-          call_end
-        </button>
+          {/* Video for yourself */}
+          <video ref={youVideo} className="you_video" playsInline muted />
+
+          {/* Video for the other user */}
+          <video ref={otherVideo} className="other_video" playsInline />
+
+          {/* Time display */}
+          <div className="time_video">
+            <span>{hours.toString().length < 2 ? "0" + hours : hours}</span>
+            <span>:</span>
+            <span>{mins.toString().length < 2 ? "0" + mins : mins}</span>
+            <span>:</span>
+            <span>{second.toString().length < 2 ? "0" + second : second}</span>
+          </div>
+
+          {/* End Call Button */}
+          <button
+            className="material-icons text-danger end_call"
+            onClick={handleEndCall}
+          >
+            call_end
+          </button>
+
+          <button
+            className="fas fa-sync-alt switch_camera" // Adjusted class name with icon
+            onClick={handleChangeCamera}
+            aria-label="Switch Camera" // Accessibility for screen readers
+          >
+            
+          </button>
+        </div>
       </div>
     </div>
   );

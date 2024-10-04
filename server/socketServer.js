@@ -38,7 +38,7 @@ const SocketServer = (socket) => {
       }
     }
     users = users.filter((user) => user.socketId !== socket.id);
-    console.log(data);
+    // console.log(data);
   });
 
   // likes
