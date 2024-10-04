@@ -328,7 +328,7 @@ const CallModal = () => {
         style={{
           opacity: answer && call.video ? "1" : "0",
           filter: theme ? "invert(1)" : "invert(0)",
-          // background:'black'
+          background:'black'
         }}
       >
         <button className="fas fa-sync-alt" onClick={handleChangeCamera} />
