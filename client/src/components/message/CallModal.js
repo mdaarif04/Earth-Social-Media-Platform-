@@ -57,17 +57,21 @@ const CallModal = () => {
 
 const handleEndCall = () => {
   // Stop all media tracks
-  if (tracks) {
-    tracks.forEach((track) => track.stop()); // This should stop the camera
+  if (tracks && tracks.length > 0) {
+    tracks.forEach((track) => track.stop()); // Stop the camera
+    setTrack([]); // Clear the track state to avoid memory leaks
   }
+
   if (newCall) {
     newCall.close(); // Close the current call
   }
+
   let times = answer ? total : 0;
   socket.emit("endCall", { ...call, times });
   addCallMessage(call, times);
   dispatch({ type: GLOBALTYPES.CALL, payload: null });
 };
+
 
 
   useEffect(() => {
@@ -101,7 +105,7 @@ const handleEndCall = () => {
   //   return navigator.mediaDevices.getUserMedia(config);
   // };
 
-const openStream = (video, facingMode = "user") => {
+const openStream = (facingMode = "user") => {
   const config = {
     audio: true, // Enable audio
     video: {
@@ -110,6 +114,7 @@ const openStream = (video, facingMode = "user") => {
   };
   return navigator.mediaDevices.getUserMedia(config); // Request access to media devices
 };
+
 
 
 const playStream = (tag, stream) => {
@@ -176,27 +181,28 @@ const HandleAnswer = () => {
 };
 
 
-  useEffect(() => {
-    peer.on("call", (newCall) => {
-      openStream(call.video).then((stream) => {
-        if (youVideo.current) {
-          playStream(youVideo.current, stream);
-        }
-        const track = stream.getTracks();
-        setTrack(track);
-        newCall.answer(stream);
-        newCall.on("stream", function (remoteStream) {
-          if (otherVideo.current) {
-            playStream(otherVideo.current, remoteStream);
-          }
-        });
-        setAnswer(true);
-        setNewCall(newCall);
-      });
-    });
+ useEffect(() => {
+   peer.on("call", (newCall) => {
+     openStream(call.video ? "user" : "environment").then((stream) => {
+       if (youVideo.current) {
+         playStream(youVideo.current, stream);
+       }
+       const track = stream.getTracks();
+       setTrack(track);
+       newCall.answer(stream);
+       newCall.on("stream", function (remoteStream) {
+         if (otherVideo.current) {
+           playStream(otherVideo.current, remoteStream);
+         }
+       });
+       setAnswer(true);
+       setNewCall(newCall);
+     });
+   });
 
-    return () => peer.removeListener("call");
-  }, [peer, call.video]);
+   return () => peer.removeListener("call");
+ }, [peer, call.video]);
+
 
   // Disconnect
   useEffect(() => {
@@ -251,42 +257,40 @@ const HandleAnswer = () => {
   const [isFrontCamera, setIsFrontCamera] = useState(true); // Track camera facing
 
 const handleChangeCamera = () => {
-    // Stop existing tracks
-    if (tracks && tracks.length > 0) {
-        tracks.forEach((track) => track.stop());
-    }
+  // Stop current tracks
+  if (tracks && tracks.length > 0) {
+    tracks.forEach((track) => track.stop()); // Stop the current video and audio tracks
+  }
 
-    // Determine facing mode
-    const facingMode = isFrontCamera ? "environment" : "user";
+  const facingMode = isFrontCamera ? "environment" : "user"; // Toggle between front and back
 
-    // Open the new stream with the appropriate facing mode
-    openStream(call.video, facingMode)
-        .then((stream) => {
-            console.log("New stream:", stream);
-            playStream(youVideo.current, stream); // Set the new stream to your video
+  openStream(facingMode) // No need to pass call.video here
+    .then((stream) => {
+      console.log("New stream:", stream); // Log the stream
+      playStream(youVideo.current, stream); // Play the new stream
 
-            const newTracks = stream.getTracks();
-            setTrack(newTracks); // Update the state with the new tracks
+      const newTracks = stream.getTracks();
+      setTrack(newTracks); // Update the track state
 
-            // Close any existing call
-            if (newCall) {
-                newCall.close();
-            }
+      // If there's an existing call, close it
+      if (newCall) {
+        newCall.close();
+      }
 
-            // Start a new call with the updated stream
-            const updatedCall = peer.call(call.peerId, stream);
-            updatedCall.on("stream", function (remoteStream) {
-                playStream(otherVideo.current, remoteStream); // Set the remote stream
-            });
+      // Start a new call with the updated stream
+      const updatedCall = peer.call(call.peerId, stream);
+      updatedCall.on("stream", function (remoteStream) {
+        playStream(otherVideo.current, remoteStream); // Play the remote stream for the other user
+      });
 
-            setNewCall(updatedCall); // Store the updated call
-        })
-        .catch((error) => {
-            console.error("Error switching camera:", error);
-        });
+      setNewCall(updatedCall); // Set the new call
+    })
+    .catch((error) => {
+      console.error("Error switching camera:", error);
+    });
 
-    // Toggle camera state for the next switch
-    setIsFrontCamera(!isFrontCamera);
+  // Toggle the camera state for the next switch
+  setIsFrontCamera(!isFrontCamera);
 };
 
 
