@@ -58,8 +58,10 @@ const CallModal = () => {
 const handleEndCall = () => {
   // Stop all media tracks
   if (tracks && tracks.length > 0) {
-    tracks.forEach((track) => track.stop()); // Stop the camera
-    setTrack([]); // Clear the track state to avoid memory leaks
+    tracks.forEach((track) => {
+      track.stop(); // This should stop the camera and audio
+    });
+    setTrack([]); // Clear the tracks array
   }
 
   if (newCall) {
