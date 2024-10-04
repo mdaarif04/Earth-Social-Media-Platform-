@@ -55,15 +55,36 @@ const CallModal = () => {
     [dispatch, socket, auth]
   );
 
+  // const handleEndCall = () => {
+  //   tracks && tracks.forEach((track) => track.stop());
+  //   if (newCall) newCall.close();
+  //   let times = answer ? total : 0;
+  //   socket.emit("endCall", { ...call, times });
+
+  //   addCallMessage(call, times);
+  //   dispatch({ type: GLOBALTYPES.CALL, payload: null });
+  // };
+
   const handleEndCall = () => {
-    tracks && tracks.forEach((track) => track.stop());
+    // Stop all media tracks to turn off the camera light
+    if (tracks) {
+      tracks.forEach((track) => {
+        track.stop(); // Stop each track
+      });
+      setTrack([]); // Clear the track state
+    }
+
+    // Close the ongoing call if applicable
     if (newCall) newCall.close();
+
     let times = answer ? total : 0;
     socket.emit("endCall", { ...call, times });
 
+    // Add the call message
     addCallMessage(call, times);
     dispatch({ type: GLOBALTYPES.CALL, payload: null });
   };
+
 
   useEffect(() => {
     if (answer) {
