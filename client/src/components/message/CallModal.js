@@ -328,10 +328,16 @@ const CallModal = () => {
         style={{
           opacity: answer && call.video ? "1" : "0",
           filter: theme ? "invert(1)" : "invert(0)",
-          background:'black'
+          background: "black",
         }}
       >
-        <button className="fas fa-sync-alt" onClick={handleChangeCamera} />
+        <button
+          className="fas fa-sync-alt  text-danger "
+          onClick={handleChangeCamera}
+          style={{cursor:'pointer'}}
+          // aria-label="Switch Camera"
+        />
+
         <video ref={youVideo} className="you_video" playsInline muted />
         <video ref={otherVideo} className="other_video" playsInline />
 

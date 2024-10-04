@@ -87,25 +87,34 @@ const handleStopStream = () => {
 };
 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (images.length === 0)
-      return dispatch({
-        type: GLOBALTYPES.ALERT,
-        payload: { error: "Please add yuor photo." },
-      });
+ const handleSubmit = (e) => {
+   e.preventDefault();
 
-    if (status.onEdit) {
-      dispatch(updatePost({ content, images, auth, status }));
-    } else {
-      dispatch(createPost({ content, images, auth, socket }));
-    }
+   if (images.length === 0)
+     return dispatch({
+       type: GLOBALTYPES.ALERT,
+       payload: { error: "Please add your photo." },
+     });
 
-    setContent("");
-    setImages([]);
-    if (tracks) tracks.stop();
-    dispatch({ type: GLOBALTYPES.STATUS, payload: false });
-  };
+   if (status.onEdit) {
+     dispatch(updatePost({ content, images, auth, status }));
+   } else {
+     dispatch(createPost({ content, images, auth, socket }));
+   }
+
+   // Reset content and images
+   setContent("");
+   setImages([]);
+
+   // Stop the tracks correctly
+   if (tracks && tracks.length > 0) {
+     tracks.forEach((track) => track.stop()); // Stop each track
+   }
+
+   // Close the status
+   dispatch({ type: GLOBALTYPES.STATUS, payload: false });
+ };
+
 
   useEffect(() => {
     if (status.onEdit) {
