@@ -15,61 +15,6 @@ const MsgDisplay = ({ user, msg, theme, data }) => {
     }
   };
 
-  // const downloadMedia
-  // onClick={(e) => downloadMedia(e, message.text)}
-  // export const downloadMedia = async (e, originalImage) => {
-  //   e.preventDefault();
-  //   try {
-  //     fetch(originalImage)
-  //       .then((resp) => resp.blob())
-  //       .then((blob) => {
-  //         const url = window.URL.createObjectURL(blob);
-  //         const a = document.createElement("a");
-  //         a.style.display = "none";
-  //         a.href = url;
-
-  //         const nameSplit = originalImage.split("/");
-  //         const duplicateName = nameSplit.pop();
-
-  //         // the filename you want
-  //         a.download = "" + duplicateName + "";
-  //         document.body.appendChild(a);
-  //         a.click();
-  //         window.URL.revokeObjectURL(url);
-  //       })
-  //       .catch((error) =>
-  //         console.log("Error while downloading the image ", error)
-  //       );
-  //   } catch (error) {
-  //     console.log("Error while downloading the image ", error.messages);
-  //   }
-  // };
-
-  // const downloadMedia = async (originalImage) => {
-  //   try {
-  //     // Fetch the file from the URL
-  //     fetch(originalImage)
-  //       .then((resp) => resp.blob())
-  //       .then((blob) => {
-  //         const url = window.URL.createObjectURL(blob);
-  //         const a = document.createElement("a");
-  //         a.style.display = "none";
-  //         a.href = url;
-
-  //         const nameSplit = originalImage.split("/");
-  //         const duplicateName = nameSplit.pop();
-
-  //         // the filename you want
-  //         a.download = "" + duplicateName + "";
-  //         document.body.appendChild(a);
-  //         a.click();
-  //         window.URL.revokeObjectURL(url);
-  //       });
-  //   } catch (error) {
-  //     console.error("Error downloading the file:", error);
-  //   }
-  // };
-
   return (
     <>
       <div className="chat_title">
@@ -84,10 +29,6 @@ const MsgDisplay = ({ user, msg, theme, data }) => {
               className="fas fa-trash text-danger"
               onClick={HandleDeleteMessage}
             />
-            {/* <i
-              className="fas fa-download text-danger"
-              onClick={(e) => downloadMedia(e, msg.text)}
-            /> */}
           </>
         )}
 
@@ -100,7 +41,7 @@ const MsgDisplay = ({ user, msg, theme, data }) => {
               {msg.text}
             </div>
           )}
-         
+
           {msg.media.map((item, index) => (
             <div key={index}>
               {item.url.match(/video/i)

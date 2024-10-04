@@ -91,8 +91,14 @@ const CallModal = () => {
   }, [socket, dispatch, tracks, addCallMessage, newCall]);
 
   // Stream Media
-  const openStream = (video) => {
-    const config = { audio: true, video };
+  // const openStream = (video) => {
+  //   const config = { audio: true, video };
+  //   return navigator.mediaDevices.getUserMedia(config);
+  // };
+
+  // Stream Media with configurable facingMode
+  const openStream = (video, facingMode = "user") => {
+    const config = { audio: true, video: { facingMode } };
     return navigator.mediaDevices.getUserMedia(config);
   };
 
@@ -210,6 +216,39 @@ const CallModal = () => {
     return () => pauseAudio(newAudio);
   }, [answer]);
 
+  const [isFrontCamera, setIsFrontCamera] = useState(true);
+
+  const handleChangeCamera = () => {
+    // Stop the current tracks before switching the camera
+    tracks && tracks.forEach((track) => track.stop());
+
+    // Switch camera facing mode
+    const facingMode = isFrontCamera ? "environment" : "user"; // Toggle between front and back
+
+    // Open the stream with the new facing mode
+    openStream(call.video, facingMode).then((stream) => {
+      playStream(youVideo.current, stream);
+      const track = stream.getTracks();
+      setTrack(track);
+
+      if (newCall) {
+        // Stop the existing call
+        newCall.close();
+
+        // Start a new call with the updated stream
+        const updatedCall = peer.call(call.peerId, stream);
+        updatedCall.on("stream", function (remoteStream) {
+          playStream(otherVideo.current, remoteStream);
+        });
+
+        setNewCall(updatedCall);
+      }
+    });
+
+    // Toggle the camera state
+    setIsFrontCamera(!isFrontCamera);
+  };
+
   return (
     <div className="call_modal">
       <div
@@ -289,8 +328,10 @@ const CallModal = () => {
         style={{
           opacity: answer && call.video ? "1" : "0",
           filter: theme ? "invert(1)" : "invert(0)",
+          // background:'black'
         }}
       >
+        <button className="fas fa-sync-alt" onClick={handleChangeCamera} />
         <video ref={youVideo} className="you_video" playsInline muted />
         <video ref={otherVideo} className="other_video" playsInline />
 
