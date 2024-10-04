@@ -16,6 +16,7 @@ const CallModal = () => {
   const [answer, setAnswer] = useState(false);
   const [tracks, setTrack] = useState([]);
   const [newCall, setNewCall] = useState(null);
+  const [facingMode, setFacingMode] = useState("user"); 
 
   const youVideo = useRef();
   const otherVideo = useRef();
@@ -159,27 +160,27 @@ const CallModal = () => {
     });
   };
 
-  useEffect(() => {
-    peer.on("call", (newCall) => {
-      openStream(call.video).then((stream) => {
-        if (youVideo.current) {
-          playStream(youVideo.current, stream);
-        }
-        const track = stream.getTracks();
-        setTrack(track);
-        newCall.answer(stream);
-        newCall.on("stream", function (remoteStream) {
-          if (otherVideo.current) {
-            playStream(otherVideo.current, remoteStream);
-          }
-        });
-        setAnswer(true);
-        setNewCall(newCall);
-      });
-    });
+ useEffect(() => {
+   peer.on("call", (newCall) => {
+     openStream(call.video).then((stream) => {
+       if (youVideo.current) {
+         playStream(youVideo.current, stream);
+       }
+       const track = stream.getTracks();
+       setTrack(track);
 
-    return () => peer.removeListener("call");
-  }, [peer, call.video]);
+       newCall.answer(stream);
+       newCall.on("stream", function (remoteStream) {
+         if (otherVideo.current) {
+           playStream(otherVideo.current, remoteStream);
+         }
+       });
+       setAnswer(true);
+       setNewCall(newCall);
+     });
+   });
+   return () => peer.removeListener("call");
+ }, [peer, call.video]);
 
   // Disconnect
   useEffect(() => {
@@ -231,35 +232,51 @@ const CallModal = () => {
     return () => pauseAudio(newAudio);
   }, [answer]);
 
-   const [facingMode, setFacingMode] = useState('user'); // 'user' for front camera, 'environment' for back camera
 
   // Change Camera Function
-  const handleChangeCamera = async () => {
-    // Toggle the facing mode
-    const newFacingMode = facingMode === 'user' ? 'environment' : 'user';
-    setFacingMode(newFacingMode);
+const handleChangeCamera = async () => {
+  // Toggle the facing mode
+  const newFacingMode = facingMode === "user" ? "environment" : "user";
+  console.log(`Switching to: ${newFacingMode}`); // Debug statement
+  setFacingMode(newFacingMode);
 
-    // Get new stream with updated facing mode
-    try {
-      const stream = await openStream({ facingMode: newFacingMode });
-      playStream(youVideo.current, stream);
-      const track = stream.getTracks();
-      setTrack(track);
-      
-      if (newCall) {
-        // Update the ongoing call with the new stream if applicable
-        newCall.replaceTrack(track[0]);
-      }
-    } catch (error) {
-      console.error('Error switching camera:', error);
+  // Get new stream with updated facing mode
+  try {
+    const stream = await openStream({ facingMode: newFacingMode });
+    console.log("New stream acquired."); // Debug statement
+    playStream(youVideo.current, stream);
+    const track = stream.getTracks();
+    setTrack(track);
+
+    if (newCall) {
+      console.log("Replacing track."); // Debug statement
+      newCall.replaceTrack(track[0]);
     }
-  };
+  } catch (error) {
+    console.error("Error switching camera:", error);
+  }
+};
+
 
   // Modify openStream to accept facingMode
-  const openStream = (video) => {
-    const config = { audio: true, video: video || { facingMode } }; // use the current facingMode if not specified
-    return navigator.mediaDevices.getUserMedia(config);
+const openStream = async (video) => {
+  const config = {
+    audio: true,
+    video: {
+      facingMode: video ? video.facingMode : facingMode, // Use provided facingMode or current one
+      // additional options can be added here if necessary
+    },
   };
+
+  try {
+    return await navigator.mediaDevices.getUserMedia(config);
+  } catch (error) {
+    console.error("Error accessing media devices.", error);
+    throw error; // Propagate the error
+  }
+};
+
+
 
   // ... existing code ...
 
