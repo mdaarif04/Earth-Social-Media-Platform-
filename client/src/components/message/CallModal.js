@@ -91,8 +91,15 @@ const CallModal = () => {
   }, [socket, dispatch, tracks, addCallMessage, newCall]);
 
   // Stream Media
-  const openStream = (video) => {
-    const config = { audio: true, video };
+  // const openStream = (video) => {
+  //   const config = { audio: true, video };
+  //   return navigator.mediaDevices.getUserMedia(config);
+  // };
+  const openStream = (constraints) => {
+    const config = {
+      audio: true,
+      video: { facingMode: constraints.facingMode },
+    };
     return navigator.mediaDevices.getUserMedia(config);
   };
 
@@ -220,8 +227,9 @@ const CallModal = () => {
     currentTrack.stop();
 
     // Determine the new facing mode
+    const currentSettings = currentTrack.getSettings();
     const newFacingMode =
-      currentTrack.getSettings().facingMode === "user" ? "environment" : "user";
+      currentSettings.facingMode === "user" ? "environment" : "user";
 
     try {
       // Open a new stream with the new facing mode
@@ -241,6 +249,9 @@ const CallModal = () => {
 
         // Update the local video element
         playStream(youVideo.current, newStream);
+
+        // Update the tracks state
+        setTrack(newStream.getTracks());
       } else {
         console.error("No video sender found.");
       }
@@ -248,6 +259,7 @@ const CallModal = () => {
       console.error("Error switching camera:", error);
     }
   };
+
 
 
   return (
