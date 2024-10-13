@@ -27,7 +27,7 @@ const Header = () => {
             onClick={() => window.scrollTo({ top: 0 })}
           >
             {/* <img width="50px" src={arlog} alt="Not found" /> */}
-            ARTPoint
+            ARTalk
           </h1>
         </Link>
 

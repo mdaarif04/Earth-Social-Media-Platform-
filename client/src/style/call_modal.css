@@ -92,25 +92,22 @@
     color: white;
 }
 
-/* New styles for the Switch Camera button */
 .switch_camera {
     position: absolute;
-    bottom: 30px; /* Adjust positioning as needed */
+    bottom: 105px; 
     left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.5rem; /* Ensure the icon is legible */
-    background: #eee; /* Consistent background with other buttons */
-    padding: 10px 15px; /* Adjust padding for better click area */
-    border-radius: 25px; /* Slightly rounded corners for style */
+    transform: translateX(65%);
+    font-size: 1.5rem; 
+    background: #eee; 
+    padding: 16px 20px; 
+    border-radius: 50px; 
     cursor: pointer;
     border: none;
     outline: none;
-    pointer-events: initial; /* Ensure it is clickable */
-    color: #dc3545; /* Text color to match the danger theme */
-    transition: background 0.3s; /* Smooth background transition */
+    pointer-events: initial; 
+    transition: background 0.3s; 
 }
 
-/* Add hover effect */
 .switch_camera:hover {
-    background: #d6d6d6; /* Slightly darker on hover */
+    background: #d6d6d6; 
 }

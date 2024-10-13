@@ -55,23 +55,15 @@ const CallModal = () => {
     [dispatch, socket, auth]
   );
 
-const handleEndCall = () => {
-  if (tracks) {
-    tracks.forEach((track) => {
-      track.stop(); // Ensure all tracks are stopped
-    });
-  }
+  const handleEndCall = () => {
+    tracks && tracks.forEach((track) => track.stop());
+    if (newCall) newCall.close();
+    let times = answer ? total : 0;
+    socket.emit("endCall", { ...call, times });
 
-  if (newCall) {
-    newCall.close(); // Close the call
-  }
-
-  let times = answer ? total : 0;
-  socket.emit("endCall", { ...call, times });
-  addCallMessage(call, times);
-  dispatch({ type: GLOBALTYPES.CALL, payload: null });
-  setTrack([]); // Clear the track state to release the reference
-};
+    addCallMessage(call, times);
+    dispatch({ type: GLOBALTYPES.CALL, payload: null });
+  };
 
   useEffect(() => {
     if (answer) {
@@ -99,27 +91,10 @@ const handleEndCall = () => {
   }, [socket, dispatch, tracks, addCallMessage, newCall]);
 
   // Stream Media
-  // const openStream = (video) => {
-  //   const config = { audio: true, video };
-  //   return navigator.mediaDevices.getUserMedia(config);
-  // };
-
-  const openStream = async ({ facingMode }) => {
-    const config = {
-      audio: true,
-      video: {
-        facingMode: { exact: facingMode }, // Use the exact facing mode
-      },
-    };
-
-    try {
-      return await navigator.mediaDevices.getUserMedia(config);
-    } catch (error) {
-      console.error("Error accessing media devices.", error);
-      throw error; // Propagate the error
-    }
+  const openStream = (video) => {
+    const config = { audio: true, video };
+    return navigator.mediaDevices.getUserMedia(config);
   };
-
 
   const playStream = (tag, stream) => {
     let video = tag;
@@ -147,21 +122,21 @@ const handleEndCall = () => {
   // };
 
   // Answer Call
- const HandleAnswer = () => {
-   openStream(call.video).then((stream) => {
-     playStream(youVideo.current, stream);
-     const newTracks = stream.getTracks(); // Get the new tracks
-     setTrack(newTracks); // Store the new tracks
+  const HandleAnswer = () => {
+    openStream(call.video).then((stream) => {
+      playStream(youVideo.current, stream);
+      const track = stream.getTracks();
+      setTrack(track);
 
-     const newCallInstance = peer.call(call.peerId, stream);
-     newCallInstance.on("stream", function (remoteStream) {
-       playStream(otherVideo.current, remoteStream);
-     });
+      const newCall = peer.call(call.peerId, stream);
+      newCall.on("stream", function (remoteStream) {
+        playStream(otherVideo.current, remoteStream);
+      });
 
-     setAnswer(true);
-     setNewCall(newCallInstance);
-   });
- };
+      setAnswer(true);
+      setNewCall(newCall);
+    });
+  };
 
   useEffect(() => {
     peer.on("call", (newCall) => {
@@ -235,28 +210,40 @@ const handleEndCall = () => {
     return () => pauseAudio(newAudio);
   }, [answer]);
 
-  const handleChangeCamera = async () => {
-    const newFacingMode =
-      tracks[0].getSettings().facingMode === "user" ? "environment" : "user"; // Toggle between user (front) and environment (back)
+  const HandleSwitchCamera = async () => {
+    // Find the current video track
+    const currentTrack = tracks.find((track) => track.kind === "video");
+
+    if (!currentTrack) return;
 
     // Stop the current video track
-    tracks.forEach((track) => track.stop());
+    currentTrack.stop();
+
+    // Determine the new facing mode
+    const newFacingMode =
+      currentTrack.getSettings().facingMode === "user" ? "environment" : "user";
 
     try {
-      // Get the new stream with the updated facing mode
-      const stream = await openStream({ facingMode: newFacingMode });
+      // Open a new stream with the new facing mode
+      const newStream = await openStream({ facingMode: newFacingMode });
 
-      // Play the new stream on your video element
-      playStream(youVideo.current, stream);
+      // Get the new video track from the new stream
+      const newVideoTrack = newStream.getVideoTracks()[0];
 
-      // Update the new call with the new track
-      const newTrack = stream.getTracks()[0];
-      if (newCall) {
-        newCall.replaceTrack(newTrack);
+      // Get the sender of the current call
+      const sender = newCall?.peerConnection
+        ?.getSenders()
+        .find((s) => s.track.kind === "video");
+
+      if (sender) {
+        // Replace the current track with the new track
+        await sender.replaceTrack(newVideoTrack);
+
+        // Update the local video element
+        playStream(youVideo.current, newStream);
+      } else {
+        console.error("No video sender found.");
       }
-
-      // Update the tracks state
-      setTrack([newTrack]);
     } catch (error) {
       console.error("Error switching camera:", error);
     }
@@ -344,6 +331,12 @@ const handleEndCall = () => {
           filter: theme ? "invert(1)" : "invert(0)",
         }}
       >
+        <button
+          className="material-icons text-primary switch_camera"
+          onClick={HandleSwitchCamera}
+        >
+          switch_camera
+        </button>
         <video ref={youVideo} className="you_video" playsInline muted />
         <video ref={otherVideo} className="other_video" playsInline />
 
@@ -361,12 +354,6 @@ const handleEndCall = () => {
         >
           call_end
         </button>
-        <button
-          className="fas fa-sync-alt switch_camera" // Adjusted class name with icon
-          onClick={handleChangeCamera}
-          aria-label="Switch Camera" // Accessibility for screen readers
-        ></button>
-        
       </div>
     </div>
   );
