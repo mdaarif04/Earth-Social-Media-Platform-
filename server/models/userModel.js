@@ -39,14 +39,20 @@ const userSchema = new mongoose.Schema(
       default: "",
       maxLength: 200,
     },
+
     website: { type: String, default: "" },
     followers: [{ type: mongoose.Types.ObjectId, ref: "user" }],
     following: [{ type: mongoose.Types.ObjectId, ref: "user" }],
     saved: [{ type: mongoose.Types.ObjectId, ref: "user" }],
+    verified: {
+      type: Boolean,
+      default: false,
+    },
   },
+
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model('user', userSchema);
+module.exports = mongoose.model("user", userSchema);

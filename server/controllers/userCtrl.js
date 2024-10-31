@@ -1,5 +1,6 @@
 const Users = require("../models/userModel");
 
+
 const userCtrl = {
   searchUser: async (req, res) => {
     try {
@@ -14,7 +15,6 @@ const userCtrl = {
       return res.status(500).json({ msg: err.message });
     }
   },
-
   getUser: async (req, res) => {
     try {
       const user = await Users.findById(req.params.id).select("-password")
