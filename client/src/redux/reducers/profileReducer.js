@@ -9,6 +9,7 @@ const initialState = {
 };
 
 const profileReducer = (state = initialState, action) => {
+  
   switch (action.type) {
     case PROFILE_TYPES.LOADING:
       return {
@@ -23,7 +24,7 @@ const profileReducer = (state = initialState, action) => {
     case PROFILE_TYPES.FOLLOW:
       return {
         ...state,
-        users: EditData(state.users, action.payload._id, action.payload)
+        users: EditData(state.users, action.payload._id, action.payload),
       };
     case PROFILE_TYPES.UNFOLLOW:
       return {
@@ -39,7 +40,6 @@ const profileReducer = (state = initialState, action) => {
       return {
         ...state,
         posts: [...state.posts, action.payload],
-        
       };
     case PROFILE_TYPES.UPDATE_POST:
       return {

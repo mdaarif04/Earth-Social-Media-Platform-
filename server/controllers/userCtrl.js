@@ -1,6 +1,5 @@
 const Users = require("../models/userModel");
 
-
 const userCtrl = {
   searchUser: async (req, res) => {
     try {
@@ -17,8 +16,9 @@ const userCtrl = {
   },
   getUser: async (req, res) => {
     try {
-      const user = await Users.findById(req.params.id).select("-password")
-      .populate("followers following", "-password")
+      const user = await Users.findById(req.params.id)
+        .select("-password")
+        .populate("followers following", "-password");
       if (!user) return res.status(400).json({ msg: "User does not exist." });
 
       res.json({ user });
@@ -26,6 +26,16 @@ const userCtrl = {
       return res.status(500).json({ msg: err.message });
     }
   },
+  // getUsers: async (req, res) => {
+  //   try {
+  //     const users = await Users.find().select("-password");
+  //     const totalUsers = users.length;
+  //     res.json({ totalUsers, users });
+  //   } catch (err) {
+  //     return res.status(500).json({ msg: err.message });
+  //   }
+  // },
+
   updateUser: async (req, res) => {
     try {
       const { avatar, fullname, mobile, address, story, website, gender } =
@@ -66,8 +76,8 @@ const userCtrl = {
         {
           $push: { followers: req.user._id },
         },
-        { new: true }).populate("followers following", "-password")
-      
+        { new: true }
+      ).populate("followers following", "-password");
 
       await Users.findOneAndUpdate(
         { _id: req.user._id },
@@ -84,12 +94,13 @@ const userCtrl = {
   },
   unfollow: async (req, res) => {
     try {
-     const newUser = await Users.findOneAndUpdate(
-       { _id: req.params.id },
-       {
-         $pull: { followers: req.user._id },
-       },
-       { new: true }).populate("followers following", "-password")
+      const newUser = await Users.findOneAndUpdate(
+        { _id: req.params.id },
+        {
+          $pull: { followers: req.user._id },
+        },
+        { new: true }
+      ).populate("followers following", "-password");
 
       await Users.findOneAndUpdate(
         { _id: req.user._id },
@@ -105,26 +116,39 @@ const userCtrl = {
   },
   suggestionsUser: async (req, res) => {
     try {
-        const newArr = [...req.user.following, req.user._id]
+      const newArr = [...req.user.following, req.user._id];
 
-        const num  = req.query.num || 10
+      const num = req.query.num || 10;
 
-        const users = await Users.aggregate([
-            { $match: { _id: { $nin: newArr } } },
-            { $sample: { size: Number(num) } },
-            { $lookup: { from: 'users', localField: 'followers', foreignField: '_id', as: 'followers' } },
-            { $lookup: { from: 'users', localField: 'following', foreignField: '_id', as: 'following' } },
-        ]).project("-password")
+      const users = await Users.aggregate([
+        { $match: { _id: { $nin: newArr } } },
+        { $sample: { size: Number(num) } },
+        {
+          $lookup: {
+            from: "users",
+            localField: "followers",
+            foreignField: "_id",
+            as: "followers",
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "following",
+            foreignField: "_id",
+            as: "following",
+          },
+        },
+      ]).project("-password");
 
-        return res.json({
-            users,
-            result: users.length
-        })
-
+      return res.json({
+        users,
+        result: users.length,
+      });
     } catch (err) {
-        return res.status(500).json({msg: err.message})
+      return res.status(500).json({ msg: err.message });
     }
-},
+  },
 };
 
 module.exports = userCtrl;

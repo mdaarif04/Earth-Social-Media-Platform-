@@ -8,16 +8,17 @@ export const GLOBALTYPES = {
   ONLINE: "ONLINE",
   OFFLINE: "OFFLINE",
   CALL: "CALL",
-  PEER: 'PEER'
+  PEER: "PEER",
+  // VERIFY_SUCCESS: "VERIFY_SUCCESS",
+  // VERIFY_FAIL: "VERIFY_FAIL",
 };
 
 export const EditData = (data, id, post) => {
-  const newData = data.map(item => 
-    item._id === id ? post : item) 
+  const newData = data.map((item) => (item._id === id ? post : item));
   return newData;
-}
+};
 
 export const DeleteData = (data, id) => {
-  const newData = data.filter(item => item._id !== id) 
+  const newData = data.filter((item) => item._id !== id);
   return newData;
-}
+};

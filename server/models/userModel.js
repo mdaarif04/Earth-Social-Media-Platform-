@@ -44,10 +44,18 @@ const userSchema = new mongoose.Schema(
     followers: [{ type: mongoose.Types.ObjectId, ref: "user" }],
     following: [{ type: mongoose.Types.ObjectId, ref: "user" }],
     saved: [{ type: mongoose.Types.ObjectId, ref: "user" }],
-    verified: {
+    isVerified: {
       type: Boolean,
       default: false,
     },
+    lastLogin: {
+      type: Date,
+      default: Date.now,
+    },
+    resetPasswordToken: String,
+    resetPasswordExpiresAt: Date,
+    verficationToken: String,
+    verficationTokenExpiresAt: Date,
   },
 
   {

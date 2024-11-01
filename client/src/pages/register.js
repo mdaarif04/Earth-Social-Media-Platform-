@@ -32,10 +32,11 @@ const Register = () => {
     e.preventDefault();
     dispatch(register(userData));
   };
+  console.log(auth.token)
 
   useEffect(() => {
     if (auth.token) {
-      Navigate("/");
+      Navigate("/verify");
     }
   }, [auth.token, Navigate]);
 

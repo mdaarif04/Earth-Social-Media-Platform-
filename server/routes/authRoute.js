@@ -9,6 +9,6 @@ router.post("/logout", authCtrl.logout);
 
 router.post("/refresh_token", authCtrl.generateAccessToken);
 
-router.get("/verify/:id/:token", authCtrl.verifyEmail); // Added email verification route
+router.post("/verifyEmail", authCtrl.VerfiyEmail);
 
 module.exports = router;

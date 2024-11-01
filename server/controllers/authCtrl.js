@@ -1,7 +1,11 @@
 const Users = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const Token = require("../models/token");
+const {
+  sendVerificationEmail,
+  sendWelcomeEmail,
+} = require("../middleware/Email");
+// const Token = require("../models/token");
 // const crypto = require("crypto");
 // const sendEmail = require("../utils/sendEmail");
 
@@ -26,6 +30,9 @@ const authCtrl = {
       }
 
       const passwordHash = await bcrypt.hash(password, 12);
+      const verficationToken = Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
 
       const newUser = new Users({
         fullname,
@@ -33,7 +40,8 @@ const authCtrl = {
         email,
         password: passwordHash,
         gender,
-        // verified: false, // Add this field to track email verification status
+        verficationToken,
+        verficationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
       });
 
       const access_token = createAccessToken({ id: newUser._id });
@@ -46,47 +54,16 @@ const authCtrl = {
       });
 
       await newUser.save();
-
-      // Generate a verification token and send the verification email
-      // const token = new Token({
-      //   userId: newUser._id,
-      //   token: crypto.randomBytes(32).toString("hex"),
-      // });
-      // await token.save();
-
-      // const url = `${process.env.BASE_URL}/api/auth/verify/${newUser._id}/${token.token}`;
-      // await sendEmail(newUser.email, "Verify Email", url);
-
+      await sendVerificationEmail(newUser.email, verficationToken);
       // Please verify your email.
       res.json({
-        msg: "Registered Success! ",
+        msg: "Please verify your email & Registered Success!  ",
         access_token,
         user: {
           ...newUser._doc,
           password: "",
         },
       });
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
-  },
-
-  verifyEmail: async (req, res) => {
-    try {
-      const user = await Users.findById(req.params.id);
-      if (!user) return res.status(400).json({ msg: "Invalid link" });
-
-      const token = await Token.findOne({
-        userId: user._id,
-        token: req.params.token,
-      });
-      if (!token)
-        return res.status(400).json({ msg: "Invalid or expired link" });
-
-      await Users.updateOne({ _id: user._id }, { verified: true });
-      await token.remove();
-
-      res.status(200).json({ msg: "Email verified successfully" });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
@@ -108,12 +85,13 @@ const authCtrl = {
       if (!isMatch)
         return res.status(400).json({ msg: "Password is incorrect." });
 
-      // Check if the user has verified their email
-      // if (!user.verified) {
-      //   return res
-      //     .status(400)
-      //     .json({ msg: "Please verify your email to login." });
-      // }
+      if (!user.isVerified) {
+        return res.status(403).json({
+          success: false,
+          message:
+            "Email not verified. Please check your email to verify your account.",
+        });
+      }
 
       const access_token = createAccessToken({ id: user._id });
       const refresh_token = createRefreshToken({ id: user._id });
@@ -134,6 +112,35 @@ const authCtrl = {
       });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
+    }
+  },
+
+  VerfiyEmail: async (req, res) => {
+    try {
+      const { code } = req.body;
+      const user = await Users.findOne({
+        verficationToken: code,
+        verficationTokenExpiresAt: { $gt: Date.now() },
+      });
+      if (!user) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Inavlid or Expired Code" });
+      }
+
+      user.isVerified = true;
+      user.verficationToken = undefined;
+      user.verficationTokenExpiresAt = undefined;
+      await user.save();
+      await sendWelcomeEmail(user.email, user.name);
+      return res
+        .status(200)
+        .json({ success: true, message: "Email Verifed Successfully" });
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(400)
+        .json({ success: false, message: "internal server error" });
     }
   },
 

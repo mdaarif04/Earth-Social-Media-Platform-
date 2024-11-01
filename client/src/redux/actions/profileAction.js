@@ -11,6 +11,7 @@ export const PROFILE_TYPES = {
   GET_ID: "GET_PROFILE_ID",
   GET_POSTS: "GET_PROFILE_POSTS",
   UPDATE_POST: "UPDATE_PROFILE_POST",
+  
 };
 
 export const getProfileUsers =
@@ -45,6 +46,7 @@ export const getProfileUsers =
     }
     // }
   };
+
 
 export const updateProfileUser =
   ({ userData, avatar, auth }) =>
@@ -183,7 +185,8 @@ export const follow =
     //   }
   };
 
-export const unfollow = ({ users, user, auth, socket }) =>
+export const unfollow =
+  ({ users, user, auth, socket }) =>
   async (dispatch) => {
     let newUser;
     if (users.every((item) => item._id !== user._id)) {
@@ -278,3 +281,4 @@ export const unfollow = ({ users, user, auth, socket }) =>
     //       });
     //     }
   };
+

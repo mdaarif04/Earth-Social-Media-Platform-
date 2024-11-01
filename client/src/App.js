@@ -17,7 +17,8 @@ import io from "socket.io-client";
 import SocketClient from "./SocketClient";
 import { getNotifies } from "./redux/actions/notifyAction";
 import CallModal from "./components/message/CallModal";
-import Peer from 'peerjs'
+import Peer from "peerjs";
+import EmailVerification from "./pages/EmailVerification";
 
 function App() {
   const { auth, status, modal, call } = useSelector((state) => state);
@@ -50,12 +51,13 @@ function App() {
     }
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     const newPeer = new Peer(undefined, {
-      path: '/', secure: true
-    })
-    dispatch({type: GLOBALTYPES.PEER, payload: newPeer})
-  },[dispatch])
+      path: "/",
+      secure: true,
+    });
+    dispatch({ type: GLOBALTYPES.PEER, payload: newPeer });
+  }, [dispatch]);
 
   return (
     <>
@@ -67,12 +69,25 @@ function App() {
             {auth.token && <Header />}
             {status && <StatusModal />}
             {auth.token && <SocketClient />}
-            {call && <CallModal /> }
+            {call && <CallModal />}
 
             <main className="wrap_page">
               <Routes>
-                <Route exact path="/" Component={auth.token ? Home : Login} />
+                <Route
+                  exact
+                  path="/"
+                  element={
+                    !auth.token ? (
+                      <Login />
+                    ) : !auth.user?.isVerified ? (
+                      <EmailVerification />
+                    ) : (
+                      <Home />
+                    )
+                  }
+                />
                 <Route exact path="/register" Component={Register} />
+                <Route exact path="/verify" Component={EmailVerification} />
                 <Route element={<PrivateRouter />}>
                   <Route path="/:page" Component={PageRender} />
                   <Route path="/:page/:id" Component={PageRender} />
