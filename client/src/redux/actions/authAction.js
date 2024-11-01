@@ -7,7 +7,6 @@ export const login = (data) => async (dispatch) => {
     dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
     const res = await postDataAPI("login", data);
 
-    // Log the response to check if token is received
     console.log("Login response:", res);
 
     dispatch({
@@ -36,7 +35,6 @@ export const login = (data) => async (dispatch) => {
     });
   }
 };
-
 
 export const refreshToken = () => async (dispatch) => {
   const firstLogin = localStorage.getItem("firstLogin");

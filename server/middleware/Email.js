@@ -7,7 +7,7 @@ const {
 const sendVerificationEmail = async (email, verificationCode) => {
   try {
     const response = await transporter.sendMail({
-      from: '"Md Aarif Raza" <cricketlive1543@gmail.com>',
+      from: '"ARTalk" <cricketlive1543@gmail.com>',
       to: email, // list of receivers
       subject: "Verify your Email", // Subject line
       text: "Verify your Email", // plain text body
@@ -25,10 +25,10 @@ const sendVerificationEmail = async (email, verificationCode) => {
 const sendWelcomeEmail = async (email, name) => {
   try {
     const response = await transporter.sendMail({
-      from: '"Md Aarif Raza" <cricketlive1543@gmail.com>',
-      to: email, // list of receivers
-      subject: "Welcome Email", // Subject line
-      text: "Welcome Email", // plain text body
+      from: '"ARTalk" <cricketlive1543@gmail.com>',
+      to: email, 
+      subject: "Welcome Email", 
+      text: "Welcome Email", 
       html: Welcome_Email_Template.replace("{name}", name),
     });
     console.log("Email sent successfully", response);

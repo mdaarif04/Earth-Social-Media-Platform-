@@ -41,29 +41,28 @@ const EmailVerification = () => {
   }, [auth.token, navigate]);
 
   return (
-    <div>
-      <h2>Email Verification</h2>
-      {alert.error && <p style={{ color: "red" }}>{alert.error}</p>}
-      {alert.success && <p style={{ color: "green" }}>{alert.success}</p>}
-      <form onSubmit={handleSubmit} style={{ display: "flex", gap: "5px" }}>
-        {codes.map((code, index) => (
-          <input
-            key={index}
-            type="text"
-            maxLength="1"
-            value={code}
-            onChange={(e) => handleChange(e, index)}
-            onKeyDown={(e) => handleBackspace(e, index)}
-            style={{
-              width: "40px",
-              height: "40px",
-              fontSize: "20px",
-              textAlign: "center",
-            }}
-            required
-          />
-        ))}
-        <button type="submit">Verify</button>
+    <div className="verification-container">
+      <h2 className="verification-title">Email Verification</h2>
+      {alert.error && <p className="alert error">{alert.error}</p>}
+      {alert.success && <p className="alert success">{alert.success}</p>}
+      <form onSubmit={handleSubmit} className="verification-form">
+        <div className="input-container">
+          {codes.map((code, index) => (
+            <input
+              key={index}
+              type="text"
+              maxLength="1"
+              value={code}
+              onChange={(e) => handleChange(e, index)}
+              onKeyDown={(e) => handleBackspace(e, index)}
+              className="verification-input"
+              required
+            />
+          ))}
+        </div>
+        <button type="submit" className="verify-button">
+          Verify
+        </button>
       </form>
     </div>
   );
