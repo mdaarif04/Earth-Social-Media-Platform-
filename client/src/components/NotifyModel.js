@@ -64,11 +64,11 @@ const NotifyModel = () => {
               className="d-flex text-dark align-items-center"
               onClick={() => handleIsRead(msg)}
             >
-              <Avatar src={msg.user.avatar} size="big-avatar" />
+              <Avatar src={msg.user?.avatar} size="big-avatar" />
 
               <div className="mx-1 flex-fill">
                 <div>
-                  <strong className="mr-1">{msg.user.username}</strong>
+                  <strong className="mr-1">{msg.user?.username}</strong>
                   <span>{msg.text}</span>
                 </div>
                 {msg.content && <small>{msg.content.slice(0, 20)}...</small>}

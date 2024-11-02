@@ -1,10 +1,11 @@
 import { GLOBALTYPES } from "../actions/globalTypes";
 
 const initialState = {
-  token: null, 
+  token: null,
   user: null,
   loading: false,
   error: null,
+  emailSent: false, 
 };
 
 const authReducer = (state = initialState, action) => {
@@ -12,8 +13,8 @@ const authReducer = (state = initialState, action) => {
     case GLOBALTYPES.AUTH:
       return {
         ...state,
-        token: action.payload.token, 
-        user: action.payload.user, 
+        token: action.payload.token,
+        user: action.payload.user,
         loading: false,
       };
     case GLOBALTYPES.LOADING:
@@ -26,6 +27,11 @@ const authReducer = (state = initialState, action) => {
         ...state,
         error: action.payload,
         loading: false,
+      };
+    case GLOBALTYPES.EMAIL_SENT: 
+      return {
+        ...state,
+        emailSent: true,
       };
     default:
       return state;

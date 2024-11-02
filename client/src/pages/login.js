@@ -83,6 +83,12 @@ const Login = () => {
             Register Now!
           </Link>
         </p>
+        <p className="my-2">
+          If you forgate?{" "}
+          <Link to="/emailsend" style={{ color: "blue" }}>
+            Reset Now!
+          </Link>
+        </p>
       </form>
     </div>
   );

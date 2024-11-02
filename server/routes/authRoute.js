@@ -11,4 +11,8 @@ router.post("/refresh_token", authCtrl.generateAccessToken);
 
 router.post("/verifyEmail", authCtrl.VerfiyEmail);
 
+router.post('/email-send', authCtrl.emailSend)
+
+router.post("/change-password", authCtrl.changePassword);
+
 module.exports = router;

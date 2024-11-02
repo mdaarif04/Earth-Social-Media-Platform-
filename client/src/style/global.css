@@ -76,8 +76,17 @@ img {
 /* --------Call Modal-------- */
 @import url("./call_modal.css");
 
-/* --------Call Modal-------- */
+/* --------During Registration Email Verification-------- */
 @import url("./emailverify.css");
+
+/* --------Email Send-------- */
+@import url("./psemail.css");
+
+/* --------OTP or Password Set-------- */
+@import url("./otppassSet.css");
+
+/* --------Email Verify for forgate-------- */
+@import url("./otppassSet.css");
 
 
 

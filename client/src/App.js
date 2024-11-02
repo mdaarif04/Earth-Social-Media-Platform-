@@ -19,6 +19,8 @@ import { getNotifies } from "./redux/actions/notifyAction";
 import CallModal from "./components/message/CallModal";
 import Peer from "peerjs";
 import EmailVerification from "./pages/EmailVerification";
+import EmailSend from "./pages/PSChange/EmailSend";
+import EmailVerify from "./pages/PSChange/EmailVerify";
 
 function App() {
   const { auth, status, modal, call } = useSelector((state) => state);
@@ -88,6 +90,8 @@ function App() {
                 />
                 <Route exact path="/register" Component={Register} />
                 <Route exact path="/verify" Component={EmailVerification} />
+                <Route exact path="/emailsend" Component={EmailSend} />
+                <Route exact path="/emailverify" Component={EmailVerify} />
                 <Route element={<PrivateRouter />}>
                   <Route path="/:page" Component={PageRender} />
                   <Route path="/:page/:id" Component={PageRender} />

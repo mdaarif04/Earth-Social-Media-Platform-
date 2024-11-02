@@ -157,3 +157,65 @@ export const verifyEmail = (verificationCode) => async (dispatch) => {
     });
   }
 };
+
+export const sendVerificationEmail = (email) => async (dispatch) => {
+  try {
+    dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
+
+    const res = await postDataAPI("email-send", { email });
+
+    if (res.data) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: {
+          success: res.data.msg,
+        },
+      });
+    }
+  } catch (err) {
+    const errorMessage = err.response?.data?.msg || "An error occurred.";
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: {
+        error: errorMessage,
+      },
+    });
+  } finally {
+    dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: false } });
+  }
+};
+
+export const changePassword = (data) => async (dispatch) => {
+  try {
+    dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
+
+    const res = await postDataAPI("change-password", data);
+
+    if (res.data.success) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: {
+          success: res.data.message,
+        },
+      });
+    } else {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: {
+          error: res.data.message,
+        },
+      });
+    }
+  } catch (err) {
+    const errorMessage =
+      err.response?.data?.message || "Failed to change password.";
+    dispatch({
+      type: GLOBALTYPES.ALERT,
+      payload: {
+        error: errorMessage,
+      },
+    });
+  } finally {
+    dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: false } });
+  }
+};
