@@ -17,6 +17,17 @@ const CallModal = () => {
   const [tracks, setTrack] = useState([]);
   const [newCall, setNewCall] = useState(null);
 
+  const [isMuted, setIsMuted] = useState(false);
+
+  const handleMuteToggle = () => {
+    if (tracks && tracks[0].kind === "audio") {
+      // Toggle the mute state of the microphone
+      const newState = !isMuted;
+      tracks[0].enabled = newState; // Mute/unmute the audio track
+      setIsMuted(newState);
+    }
+  };
+
   const youVideo = useRef();
   const otherVideo = useRef();
 
@@ -238,29 +249,35 @@ const CallModal = () => {
       // Get the new video track from the new stream
       const newVideoTrack = newStream.getVideoTracks()[0];
 
-      // Get the sender of the current call
-      const sender = newCall?.peerConnection
-        ?.getSenders()
-        .find((s) => s.track.kind === "video");
+      // Replace the current track with the new track
+      if (newCall && newCall.peerConnection) {
+        const sender = newCall.peerConnection
+          .getSenders()
+          .find((s) => s.track.kind === "video");
+        if (sender) {
+          await sender.replaceTrack(newVideoTrack);
 
-      if (sender) {
-        // Replace the current track with the new track
-        await sender.replaceTrack(newVideoTrack);
+          // Update the local video element with the new stream
+          playStream(youVideo.current, newStream);
 
-        // Update the local video element
-        playStream(youVideo.current, newStream);
-
-        // Update the tracks state
-        setTrack(newStream.getTracks());
+          // Update the tracks state
+          setTrack((prevTracks) => {
+            const updatedTracks = prevTracks.filter(
+              (track) => track.kind !== "video"
+            );
+            updatedTracks.push(newVideoTrack);
+            return updatedTracks;
+          });
+        } else {
+          console.error("No video sender found in peer connection.");
+        }
       } else {
-        console.error("No video sender found.");
+        console.error("No active call or peer connection to switch camera.");
       }
     } catch (error) {
       console.error("Error switching camera:", error);
     }
   };
-
-
 
   return (
     <div className="call_modal">
@@ -349,6 +366,17 @@ const CallModal = () => {
         >
           switch_camera
         </button>
+        {/* For Mute */}
+        <button
+          className={`material-icons ${
+            isMuted ? "text-muted" : "text-primary"
+          }`}
+          onClick={handleMuteToggle}
+        >
+          {isMuted ? "mic_off" : "mic"}
+        </button>
+        {/* *------------ */}
+        
         <video ref={youVideo} className="you_video" playsInline muted />
         <video ref={otherVideo} className="other_video" playsInline />
 

@@ -90,7 +90,9 @@ const LeftSide = () => {
           type="text"
           value={search}
           placeholder="Enter username to Search..."
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) =>
+            setSearch(e.target.value.toLowerCase().replace(/ /g, ""))
+          }
         />
 
         <button type="submit" style={{ display: "none" }}>

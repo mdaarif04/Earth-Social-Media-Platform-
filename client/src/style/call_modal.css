@@ -67,7 +67,7 @@
     width: 300px;
     max-height: 250px;
     border-radius: 5px;
-    border: 1px solid crimson;
+    /* border: 1px solid crimson; */
     z-index: 10;
 }
 .call_modal .end_call{
