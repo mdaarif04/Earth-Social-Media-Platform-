@@ -111,3 +111,25 @@
 .switch_camera:hover {
     background: #d6d6d6; 
 }
+
+.Mic_Off {
+    position: absolute;
+    bottom: 105px; 
+    left: 30%;
+    transform: translateX(65%);
+    font-size: 1.5rem; 
+    background: #eee; 
+    padding: 16px 20px; 
+    border-radius: 50px; 
+    cursor: pointer;
+    border: none;
+    outline: none;
+    pointer-events: initial; 
+    transition: background 0.3s; 
+}
+
+.Mic_Off:hover {
+    background: #d6d6d6; 
+}
+
+

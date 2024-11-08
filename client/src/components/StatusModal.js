@@ -129,12 +129,10 @@ const handleStopStream = () => {
       tracks.forEach((track) => track.stop());
     }
 
-    // Toggle cameraFacingMode
     setCameraFacingMode((prevMode) =>
       prevMode === "user" ? "environment" : "user"
     );
 
-    // Restart the stream with the new camera mode
     handleStream();
   };
 

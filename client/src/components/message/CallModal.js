@@ -16,17 +16,7 @@ const CallModal = () => {
   const [answer, setAnswer] = useState(false);
   const [tracks, setTrack] = useState([]);
   const [newCall, setNewCall] = useState(null);
-
-  const [isMuted, setIsMuted] = useState(false);
-
-  const handleMuteToggle = () => {
-    if (tracks && tracks[0].kind === "audio") {
-      // Toggle the mute state of the microphone
-      const newState = !isMuted;
-      tracks[0].enabled = newState; // Mute/unmute the audio track
-      setIsMuted(newState);
-    }
-  };
+  const [micOn, setMicOn] = useState(true);
 
   const youVideo = useRef();
   const otherVideo = useRef();
@@ -228,55 +218,65 @@ const CallModal = () => {
     return () => pauseAudio(newAudio);
   }, [answer]);
 
-  const HandleSwitchCamera = async () => {
+const HandleSwitchCamera = async () => {
+  try {
     // Find the current video track
     const currentTrack = tracks.find((track) => track.kind === "video");
 
     if (!currentTrack) return;
-
-    // Stop the current video track
-    currentTrack.stop();
 
     // Determine the new facing mode
     const currentSettings = currentTrack.getSettings();
     const newFacingMode =
       currentSettings.facingMode === "user" ? "environment" : "user";
 
-    try {
-      // Open a new stream with the new facing mode
-      const newStream = await openStream({ facingMode: newFacingMode });
+    // Stop the current video track
+    currentTrack.stop();
 
-      // Get the new video track from the new stream
-      const newVideoTrack = newStream.getVideoTracks()[0];
+    // Open a new stream with the new facing mode
+    const newStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: newFacingMode },
+      audio: true, // Keep audio consistent
+    });
 
-      // Replace the current track with the new track
-      if (newCall && newCall.peerConnection) {
-        const sender = newCall.peerConnection
-          .getSenders()
-          .find((s) => s.track.kind === "video");
-        if (sender) {
-          await sender.replaceTrack(newVideoTrack);
+    // Get the new video track from the new stream
+    const newVideoTrack = newStream.getVideoTracks()[0];
 
-          // Update the local video element with the new stream
-          playStream(youVideo.current, newStream);
+    // Replace the current track with the new track in the existing connection
+    const sender = newCall?.peerConnection
+      ?.getSenders()
+      .find((s) => s.track.kind === "video");
 
-          // Update the tracks state
-          setTrack((prevTracks) => {
-            const updatedTracks = prevTracks.filter(
-              (track) => track.kind !== "video"
-            );
-            updatedTracks.push(newVideoTrack);
-            return updatedTracks;
-          });
-        } else {
-          console.error("No video sender found in peer connection.");
-        }
-      } else {
-        console.error("No active call or peer connection to switch camera.");
-      }
-    } catch (error) {
-      console.error("Error switching camera:", error);
+    if (sender) {
+      await sender.replaceTrack(newVideoTrack);
+
+      // Play the new stream in the local video element
+      playStream(youVideo.current, newStream);
+
+      // Update the tracks state with the new track
+      setTrack(newStream.getTracks());
+    } else {
+      console.error("No video sender found.");
     }
+  } catch (error) {
+    console.error("Error switching camera:", error);
+  }
+};
+
+
+  const HandleMicrophone = () => {
+    setMicOn((prevMicOn) => {
+      // Toggle micOn state
+      const newMicStatus = !prevMicOn;
+
+      // Find the current audio track
+      const audioTrack = tracks.find((track) => track.kind === "audio");
+      if (audioTrack) {
+        audioTrack.enabled = newMicStatus; // Enable/disable audio
+      }
+
+      return newMicStatus;
+    });
   };
 
   return (
@@ -360,23 +360,17 @@ const CallModal = () => {
           filter: theme ? "invert(1)" : "invert(0)",
         }}
       >
-        <button
-          className="material-icons text-primary switch_camera"
+        <i
+          className="fas fa-sync-alt switch_camera"
           onClick={HandleSwitchCamera}
-        >
-          switch_camera
-        </button>
-        {/* For Mute */}
-        <button
-          className={`material-icons ${
-            isMuted ? "text-muted" : "text-primary"
-          }`}
-          onClick={handleMuteToggle}
-        >
-          {isMuted ? "mic_off" : "mic"}
-        </button>
-        {/* *------------ */}
-        
+        />
+        <i
+          className={`fa ${
+            micOn ? "fa-microphone" : "fa-microphone-slash"
+          } Mic_Off`}
+          onClick={HandleMicrophone}
+        />
+
         <video ref={youVideo} className="you_video" playsInline muted />
         <video ref={otherVideo} className="other_video" playsInline />
 
