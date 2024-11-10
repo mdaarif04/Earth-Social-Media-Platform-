@@ -27,8 +27,8 @@ const StatusModal = () => {
     files.forEach((file) => {
       if (!file) return (err = "File does not exist.");
 
-      if (file.size > 1024 * 1024 * 5) {
-        return (err = "The Image/video largest is 5mb.");
+      if (file.size > 1024 * 1024 * 30) {
+        return (err = "The Image/video largest is 30mb.");
       }
       return newImages.push(file);
     });
@@ -184,7 +184,7 @@ const handleStopStream = () => {
                   </>
                 ) : (
                   <>
-                    {img.type.match(/video/i)
+                    {img.type?.match(/video/i)
                       ? videoShow(URL.createObjectURL(img), theme)
                       : imageShow(URL.createObjectURL(img), theme)}
                   </>

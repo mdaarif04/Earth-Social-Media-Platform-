@@ -72,8 +72,7 @@ export const getPosts = (token) => async (dispatch) => {
   }
 };
 
-export const updatePost =
-  ({ content, images, auth, status }) =>
+export const updatePost =({ content, images, auth, status }) =>
   async (dispatch) => {
     let media = [];
     const imgNewUrl = images.filter((img) => !img.url);
@@ -202,8 +201,7 @@ export const deletePost =({ post, auth, socket }) =>
     }
   };
 
-export const savePost =
-  ({ post, auth }) =>
+export const savePost =({ post, auth }) =>
   async (dispatch) => {
     const newUser = { ...auth.user, saved: [...auth.user.saved, post._id] };
     dispatch({ type: GLOBALTYPES.AUTH, payload: { ...auth, user: newUser } });
@@ -218,8 +216,7 @@ export const savePost =
     }
   };
 
-export const unSavePost =
-  ({ post, auth }) =>
+export const unSavePost =({ post, auth }) =>
   async (dispatch) => {
     const newUser = {
       ...auth.user,

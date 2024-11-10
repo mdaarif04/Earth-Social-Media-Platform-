@@ -23,7 +23,7 @@ const Carousel = ({ images, id }) => {
       <div className="carousel-inner">
         {images.map((img, index) => (
           <div key={index} className={`carousel-item ${isActive(index)}`}>
-            {img.url.match(/video/i) ? (
+            {img.url?.match(/video/i) ? (
               <video controls
                 src={img.url}
                 className="d-block w-100"

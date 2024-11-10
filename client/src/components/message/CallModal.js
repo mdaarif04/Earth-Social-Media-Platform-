@@ -364,12 +364,6 @@ const HandleSwitchCamera = async () => {
           className="fas fa-sync-alt switch_camera"
           onClick={HandleSwitchCamera}
         />
-        <i
-          className={`fa ${
-            micOn ? "fa-microphone" : "fa-microphone-slash"
-          } Mic_Off`}
-          onClick={HandleMicrophone}
-        />
 
         <video ref={youVideo} className="you_video" playsInline muted />
         <video ref={otherVideo} className="other_video" playsInline />
@@ -388,6 +382,12 @@ const HandleSwitchCamera = async () => {
         >
           call_end
         </button>
+        <i
+          className={`fa ${
+            micOn ? "fa-microphone" : "fa-microphone-slash"
+          } Mic_Off`}
+          onClick={HandleMicrophone}
+        />
       </div>
     </div>
   );

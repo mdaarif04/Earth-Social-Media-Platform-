@@ -73,10 +73,10 @@
 .call_modal .end_call{
     position: absolute;
     bottom: 100px;
-    left: 50%;
+    left: 43%;
     transform: translateX(-50%);
     pointer-events: initial;
-    font-size: 2rem;
+    font-size: 1.7rem;
     background: #eee;
     padding: 15px;
     border-radius: 50%;
@@ -95,7 +95,7 @@
 .switch_camera {
     position: absolute;
     bottom: 105px; 
-    left: 50%;
+    left: 53%;
     transform: translateX(65%);
     font-size: 1.5rem; 
     background: #eee; 
@@ -115,12 +115,12 @@
 .Mic_Off {
     position: absolute;
     bottom: 105px; 
-    left: 30%;
+    left: 43%;
     transform: translateX(65%);
-    font-size: 1.5rem; 
+    font-size: 1.4rem; 
     background: #eee; 
-    padding: 16px 20px; 
-    border-radius: 50px; 
+    padding: 15px 19px; 
+    border-radius: 45%; 
     cursor: pointer;
     border: none;
     outline: none;
