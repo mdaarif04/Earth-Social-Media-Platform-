@@ -218,63 +218,50 @@ const CallModal = () => {
     return () => pauseAudio(newAudio);
   }, [answer]);
 
-const HandleSwitchCamera = async () => {
-  try {
-    // Find the current video track
-    const currentTrack = tracks.find((track) => track.kind === "video");
+  const HandleSwitchCamera = async () => {
+    try {
+      const currentTrack = tracks.find((track) => track.kind === "video");
 
-    if (!currentTrack) return;
+      if (!currentTrack) return;
 
-    // Determine the new facing mode
-    const currentSettings = currentTrack.getSettings();
-    const newFacingMode =
-      currentSettings.facingMode === "user" ? "environment" : "user";
+      const currentSettings = currentTrack.getSettings();
+      const newFacingMode =
+        currentSettings.facingMode === "user" ? "environment" : "user";
 
-    // Stop the current video track
-    currentTrack.stop();
+      currentTrack.stop();
 
-    // Open a new stream with the new facing mode
-    const newStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: newFacingMode },
-      audio: true, // Keep audio consistent
-    });
+      const newStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: newFacingMode },
+        audio: true,
+      });
 
-    // Get the new video track from the new stream
-    const newVideoTrack = newStream.getVideoTracks()[0];
+      const newVideoTrack = newStream.getVideoTracks()[0];
 
-    // Replace the current track with the new track in the existing connection
-    const sender = newCall?.peerConnection
-      ?.getSenders()
-      .find((s) => s.track.kind === "video");
+      const sender = newCall?.peerConnection
+        ?.getSenders()
+        .find((s) => s.track.kind === "video");
 
-    if (sender) {
-      await sender.replaceTrack(newVideoTrack);
+      if (sender) {
+        await sender.replaceTrack(newVideoTrack);
 
-      // Play the new stream in the local video element
-      playStream(youVideo.current, newStream);
+        playStream(youVideo.current, newStream);
 
-      // Update the tracks state with the new track
-      setTrack(newStream.getTracks());
-    } else {
-      console.error("No video sender found.");
+        setTrack(newStream.getTracks());
+      } else {
+        console.error("No video sender found.");
+      }
+    } catch (error) {
+      console.error("Error switching camera:", error);
     }
-  } catch (error) {
-    console.error("Error switching camera:", error);
-  }
-};
-
+  };
 
   const HandleMicrophone = () => {
     setMicOn((prevMicOn) => {
-      // Toggle micOn state
       const newMicStatus = !prevMicOn;
-
-      // Find the current audio track
       const audioTrack = tracks.find((track) => track.kind === "audio");
       if (audioTrack) {
-        audioTrack.enabled = newMicStatus; // Enable/disable audio
+        audioTrack.enabled = newMicStatus;
       }
-
       return newMicStatus;
     });
   };
@@ -364,6 +351,12 @@ const HandleSwitchCamera = async () => {
           className="fas fa-sync-alt switch_camera"
           onClick={HandleSwitchCamera}
         />
+        <i
+          className={`fa ${
+            micOn ? "fa-microphone" : "fa-microphone-slash"
+          } Mic_Off`}
+          onClick={HandleMicrophone}
+        />
 
         <video ref={youVideo} className="you_video" playsInline muted />
         <video ref={otherVideo} className="other_video" playsInline />
@@ -382,12 +375,6 @@ const HandleSwitchCamera = async () => {
         >
           call_end
         </button>
-        <i
-          className={`fa ${
-            micOn ? "fa-microphone" : "fa-microphone-slash"
-          } Mic_Off`}
-          onClick={HandleMicrophone}
-        />
       </div>
     </div>
   );
