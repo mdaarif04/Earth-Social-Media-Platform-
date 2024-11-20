@@ -1,7 +1,13 @@
 /* --------- Status ---------- */
+.col-md-8 {
+  position: relative;
+  width: 100%;
+  padding-right: 0;
+  padding-left: 0;
+}
 .status {
   background: white;
-  box-shadow: 0 0 5px #ce8282;
+  /* box-shadow: 0 0 5px #ce8282; */
   padding: 20px;
   border-radius: 5px;
   border: 1px solid rgb(0, 0, 0, 0.125);
@@ -22,15 +28,9 @@
 
 /* ------------Posts ------ */
 .posts .card {
-  box-shadow: 0 0 4px #af7b7b;
-  /* width: 92%; */
+  /* box-shadow: 0 0 4px #af7b7b; */
 }
 
-/* @media (max-width: 768px) {
-  .posts .card {
-    width: 100%;
-  }
-} */
 /* --------- Post Card Header --------- */
 .posts .card_header {
   display: flex;
