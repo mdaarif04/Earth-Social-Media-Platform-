@@ -35,16 +35,9 @@ const Info = ({ id, auth, profile, dispatch }) => {
   const navigate = useNavigate();
 
 
-  const MessageBox= ()=>{
-    // setSearch("");
-    // setSearchUsers([]);
-    // dispatch({
-    //   type: MESS_TYPES.ADD_USER,
-    //   payload: { ...user, text: "", media: [] },
-    // });
-    return navigate(`/message`);
-    // /${user._id}
-  }
+ const MessageBox = (user) => {
+   navigate(`/message/${user._id}`); // Pass the user ID in the URL
+ };
 
   return (
     <div className="info">
@@ -79,8 +72,11 @@ const Info = ({ id, auth, profile, dispatch }) => {
               ) : (
                 // Show the Message button and the Follow button for other users
                 <>
-                  <button className="btn btn-outline-info " onClick={MessageBox}>
-                    Message 
+                  <button
+                    className="btn btn-outline-info"
+                    onClick={() => MessageBox(user)} // Pass the user object to the MessageBox
+                  >
+                    Message
                   </button>
                   <FollowBtn user={user} />
                 </>

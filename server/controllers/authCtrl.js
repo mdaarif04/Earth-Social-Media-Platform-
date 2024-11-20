@@ -6,8 +6,11 @@ const {
   sendWelcomeEmail,
   sendResetVerification,
   sendPasswordChangeConfirmation,
+  RemainderEmail,
 } = require("../middleware/Email");
 const otp = require("../models/otpModel");
+const cron = require("node-cron");
+const moment = require("moment");
 
 const authCtrl = {
   register: async (req, res) => {
@@ -92,6 +95,9 @@ const authCtrl = {
             "Email not verified. Please check your email to verify your account.",
         });
       }
+
+      user.lastLogin = Date.now();
+      await user.save();
 
       const access_token = createAccessToken({ id: user._id });
       const refresh_token = createRefreshToken({ id: user._id });
@@ -233,6 +239,25 @@ const authCtrl = {
     }
   },
 
+  sendReminderEmails: async () => {
+    try {
+      const thresholdDate = moment().subtract(5, "days").toDate(); // 5, "days"
+      // console.log("Threshold Date:", thresholdDate);
+
+      const inactiveUsers = await Users.find({
+        lastLogin: { $lt: thresholdDate },
+        isVerified: true,
+      });
+
+      for (const user of inactiveUsers) {
+        await RemainderEmail(user.email, user.fullname);
+        // console.log(`Reminder email sent to ${user.email}`);
+      }
+    } catch (error) {
+      console.error("Error in sending reminder emails:", error.message);
+    }
+  },
+
   generateAccessToken: async (req, res) => {
     try {
       const ref_token = req.cookies.refreshtoken;
@@ -265,6 +290,12 @@ const authCtrl = {
     }
   },
 };
+
+cron.schedule("0 0 * * *", async () => {
+  // console.log("Cron job triggered at midnight");
+  await authCtrl.sendReminderEmails();
+});
+
 
 const createAccessToken = (payload) => {
   return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {

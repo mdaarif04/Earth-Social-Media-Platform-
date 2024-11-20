@@ -4,6 +4,7 @@ const {
   Welcome_Email_Template,
   ResetVerification_Email_Template,
   Pss_ChangeWelcome_Email_Template,
+  Remainder_Email_Template,
 } = require("./EmailTemplate.js");
 
 const sendVerificationEmail = async (email, verificationCode) => {
@@ -72,10 +73,26 @@ const sendPasswordChangeConfirmation = async (email, name) => {
     console.log("Email error", error);
   }
 };
+const RemainderEmail = async (email, name) => {
+  try {
+    const response = await transporter.sendMail({
+      from: '"ARTalk" <cricketlive1543@gmail.com>',
+
+      to: email,
+      subject: "We Miss You at ARTalk!",
+      text: "Welcome To ARTalk Community",
+      html: Remainder_Email_Template.replace("{name}", name),
+    });
+    console.log("Email sent successfully", response);
+  } catch (error) {
+    console.log("Email error", error);
+  }
+};
 
 module.exports = {
   sendVerificationEmail,
   sendWelcomeEmail,
   sendResetVerification,
   sendPasswordChangeConfirmation,
+  RemainderEmail
 };
