@@ -88,6 +88,9 @@ img {
 /* --------Email Verify for forgate-------- */
 @import url("./otppassSet.css");
 
+/* --------Screen Live Capturing-------- */
+@import url("./live.css");
+
 
 
 /* --------- Responsive ------ */

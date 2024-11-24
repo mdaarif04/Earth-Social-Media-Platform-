@@ -5,6 +5,7 @@ import FollowBtn from '../FollowBtn'
 
 import LoadIcon from '../../images/loading.gif'
 import {getSuggestions} from '../../redux/actions/suggestionsAction'
+import ScreenRecorder from '../../ScreenRecording/ScreenRecording'
 
 
 const RightSideBar = () => {
@@ -14,6 +15,7 @@ const RightSideBar = () => {
   return (
     <div className="mt-3">
       <UserCard user={auth.user} />
+      <ScreenRecorder />
 
       <div className="d-flex justify-content-between align-items-center my-2">
         <h5 className="text-danger">Suggestions for you</h5>
