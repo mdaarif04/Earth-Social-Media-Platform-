@@ -7,9 +7,15 @@ const ScreenRecorder = () => {
 
   const startRecording = async () => {
     try {
+      // Check for screen capture support
+      if (!navigator.mediaDevices.getDisplayMedia) {
+        alert("Screen recording is not supported on your device.");
+        return;
+      }
+
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
-        audio: true, 
+        audio: true,
       });
 
       const audioStream = await navigator.mediaDevices.getUserMedia({
@@ -22,7 +28,7 @@ const ScreenRecorder = () => {
       ]);
 
       const mediaRecorder = new MediaRecorder(combinedStream, {
-        mimeType: "video/webm", 
+        mimeType: "video/webm",
       });
 
       mediaRecorderRef.current = mediaRecorder;
@@ -37,8 +43,10 @@ const ScreenRecorder = () => {
       setIsRecording(true);
     } catch (error) {
       console.error("Error starting screen recording:", error);
+      alert("An error occurred while starting the screen recording.");
     }
   };
+
 
   const stopRecording = () => {
     mediaRecorderRef.current.stop();
