@@ -6,6 +6,7 @@ import FollowBtn from '../FollowBtn'
 import LoadIcon from '../../images/loading.gif'
 import {getSuggestions} from '../../redux/actions/suggestionsAction'
 import ScreenRecorder from '../../ScreenRecording/ScreenRecording'
+import { Link } from 'react-router-dom'
 
 
 const RightSideBar = () => {
@@ -15,7 +16,7 @@ const RightSideBar = () => {
   return (
     <div className="mt-3">
       <UserCard user={auth.user} />
-      <ScreenRecorder />
+      <Link style={{textDecoration:'none'}}  to="/screenrecorder">ScreenRecorder</Link>
 
       <div className="d-flex justify-content-between align-items-center my-2">
         <h5 className="text-danger">Suggestions for you</h5>
@@ -31,9 +32,9 @@ const RightSideBar = () => {
       {suggestions.loading ? (
         <img src={LoadIcon} alt="loading" className="d-block mx-auto my-4" />
       ) : (
-        <div className="suggestions" style={{}}> 
+        <div className="suggestions" style={{}}>
           {suggestions.users.map((user) => (
-            <UserCard key={user._id} user={user} >
+            <UserCard key={user._id} user={user}>
               <FollowBtn user={user} />
             </UserCard>
           ))}
@@ -44,7 +45,7 @@ const RightSideBar = () => {
           href="https://www.youtube.com/@ARazaTPoint"
           target="_blank"
           rel="noreferrer"
-        style={{wordBreak:'break-all'}}
+          style={{ wordBreak: "break-all" }}
         >
           https://www.youtube.com/@ARazaTPoint
         </a>

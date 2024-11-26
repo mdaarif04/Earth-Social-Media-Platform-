@@ -21,6 +21,7 @@ import Peer from "peerjs";
 import EmailVerification from "./pages/EmailVerification";
 import EmailSend from "./pages/PSChange/EmailSend";
 import EmailVerify from "./pages/PSChange/EmailVerify";
+import ScreenRecorder from "./ScreenRecording/ScreenRecording";
 
 function App() {
   const { auth, status, modal, call } = useSelector((state) => state);
@@ -89,6 +90,7 @@ function App() {
                     )
                   }
                 />
+                <Route exact path="/screenrecorder" Component={ScreenRecorder} />
                 <Route exact path="/register" Component={Register} />
                 <Route exact path="/verify" Component={EmailVerification} />
                 <Route exact path="/emailsend" Component={EmailSend} />
