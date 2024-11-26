@@ -9,3 +9,15 @@
     border: none;
     color: crimson;
 }
+
+button {
+  font-size: 1rem;
+  padding: 10px;
+  margin: 5px;
+}
+@media (max-width: 600px) {
+  button {
+    font-size: 0.8rem;
+    padding: 5px;
+  }
+}
