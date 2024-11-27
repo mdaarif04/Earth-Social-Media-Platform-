@@ -25,7 +25,8 @@ const Header = () => {
             onClick={() => window.scrollTo({ top: 0 })}
           >
             {/* <img width="50px" src={arlog} alt="Not found" /> */}
-            YaarTalk
+            {/* YaarTalk */}
+            ARTalk
           </h1>
         </Link>
 
