@@ -21,7 +21,7 @@ import Peer from "peerjs";
 import EmailVerification from "./pages/EmailVerification";
 import EmailSend from "./pages/PSChange/EmailSend";
 import EmailVerify from "./pages/PSChange/EmailVerify";
-import ScreenRecorder from "./ScreenRecording/ScreenRecording";
+import ScreenRecorder from "./components/ScreenRecording/ScreenRecording";
 
 function App() {
   const { auth, status, modal, call } = useSelector((state) => state);

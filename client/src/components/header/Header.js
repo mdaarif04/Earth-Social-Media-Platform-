@@ -6,7 +6,7 @@ import Search from "./Search";
 
 const Header = () => {
   return (
-    <div className="header bg-light" >
+    <div className="header bg-light">
       <nav
         className="navbar navbar-expand-lg navbar-light
             bg-light justify-content-between align-middle"
@@ -14,20 +14,18 @@ const Header = () => {
         <Link to="/" className="logo">
           <h1
             style={{
-              fontFamily: "Arial" /* Font family */,
-              fontSize: "48px" /* Font size */,
-              fontWeight: "bold" /* Font weight */,
-              color: "#4A90E2" /* Main color */,
-              textShadow:
-                "2px 2px 4px rgba(0, 0, 0, 0.1)" /* Subtle shadow effect */,
-              transition:
-                "color 0.3s ease" /* Smooth transition for color change */,
+              fontFamily: "Arial",
+              fontSize: "48px",
+              fontWeight: "bold",
+              color: "#4A90E2",
+              textShadow: "2px 2px 4px rgba(0, 0, 0, 0.1)",
+              transition: "color 0.3s ease",
             }}
             className="navbar-brand text-uppercase  p-0 m-0"
             onClick={() => window.scrollTo({ top: 0 })}
           >
             {/* <img width="50px" src={arlog} alt="Not found" /> */}
-            ARTalk
+            YaarTalk
           </h1>
         </Link>
 
