@@ -11,7 +11,7 @@
 .controls {
   position: fixed;
   top: 150px;
-  right: 10;
+  right: 10px;
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -19,39 +19,32 @@
   pointer-events: auto;
 }
 
-button {
+.btn {
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
-  color: white;
   transition: background-color 0.3s;
 }
 
-button:hover {
-  background-color: #0056b3;
+.btn:hover {
+  filter: brightness(90%);
 }
 
 .start-btn {
   background-color: #28a745;
-}
-
-.start-btn:hover {
-  background-color: #218838;
+  color: white;
 }
 
 .stop-btn {
   background-color: #dc3545;
-}
-
-.stop-btn:hover {
-  background-color: #c82333;
+  color: white;
 }
 
 .tool-btn {
   background-color: #ffc107;
+  color: black;
 }
 
 .tool-btn.active {
@@ -60,10 +53,7 @@ button:hover {
 
 .download-btn {
   background-color: #17a2b8;
-}
-
-.download-btn:hover {
-  background-color: #138496;
+  color: white;
 }
 
 @media (max-width: 600px) {
@@ -73,7 +63,7 @@ button:hover {
     flex-wrap: wrap;
   }
 
-  button {
+  .btn {
     font-size: 14px;
     padding: 8px 16px;
   }

@@ -110,22 +110,22 @@ const ScreenRecorder = () => {
       ></canvas>
       <div className="controls">
         {!isRecording ? (
-          <button className="start-btn" onClick={startRecording}>
+          <button className="btn start-btn" onClick={startRecording}>
             Start Recording
           </button>
         ) : (
           <>
-            <button className="stop-btn" onClick={stopRecording}>
+            <button className="btn stop-btn" onClick={stopRecording}>
               Stop Recording
             </button>
             <button
-              className={`tool-btn ${tool === "pencil" ? "active" : ""}`}
+              className={`btn tool-btn ${tool === "pencil" ? "active" : ""}`}
               onClick={() => setTool("pencil")}
             >
               Pencil
             </button>
             <button
-              className={`tool-btn ${tool === "eraser" ? "active" : ""}`}
+              className={`btn tool-btn ${tool === "eraser" ? "active" : ""}`}
               onClick={() => setTool("eraser")}
             >
               Eraser
@@ -133,7 +133,7 @@ const ScreenRecorder = () => {
           </>
         )}
         {recordedChunks.length > 0 && (
-          <button className="download-btn" onClick={downloadRecording}>
+          <button className="btn download-btn" onClick={downloadRecording}>
             Download Recording
           </button>
         )}
