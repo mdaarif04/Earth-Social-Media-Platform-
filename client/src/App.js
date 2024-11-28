@@ -42,17 +42,7 @@ function App() {
     }
   }, [dispatch, auth.token]);
 
-  useEffect(() => {
-    if (!("Notification" in window)) {
-      alert("This browser does not support desktop notification");
-    } else if (Notification.permission === "granted") {
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission().then(function (permission) {
-        if (permission === "granted") {
-        }
-      });
-    }
-  }, []);
+ 
 
   useEffect(() => {
     const newPeer = new Peer(undefined, {
@@ -68,28 +58,7 @@ function App() {
       <BrowserRouter>
         <Alert />
         <input type="checkbox" id="theme" />
-        <div className={`App ${(status || modal) && "mode"}`}>
-          <div className="main">
-            {auth.token && <Header />}
-            {status && <StatusModal />}
-            {auth.token && <SocketClient />}
-            {call && <CallModal />}
-
-            <main className="wrap_page">
-              <Routes>
-                <Route
-                  exact
-                  path="/"
-                  element={
-                    !auth.token ? (
-                      <Login />
-                    ) : !auth.user?.isVerified ? (
-                      <EmailVerification />
-                    ) : (
-                      <Home />
-                    )
-                  }
-                />
+        
                 <Route exact path="/screenrecorder" Component={ScreenRecorder} />
                 <Route exact path="/register" Component={Register} />
                 <Route exact path="/verify" Component={EmailVerification} />
