@@ -40,15 +40,7 @@ app.use("/api", require("./routes/authRoute"));
 app.use("/api", require("./routes/userRouter"));
 app.use("/api", require("./routes/postRouter"));
 app.use("/api", require("./routes/commentRouter"));
-app.use("/api", require("./routes/notifyRouter"));
-app.use("/api", require("./routes/messageRouter"));
 
-// -----------------------------Deployment----------------
-app.use(express.static(path.join(_dirname, "/client/build")));
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(_dirname, "client", "build", "index.html"));
-});
-// -----------------------------Deployment----------------
 
 const port = process.env.PORT || 8000;
 http.listen(port, () => console.log(`Sever is running on ${port}`));
